@@ -1,7 +1,7 @@
 Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace.
 
-Pokud by byl problém s GitHubem (např. s adresářem s fotografiemi kotaktů), kompletní VS solution je možno stáhnout zde:
-https://
+Adresář se simulovanými fotografiemi kontaktů je v binu, takže jej na GitHubu nenaleznete, ale kompletní VS solution je možno stáhnout zde:
+[https://www.uschovna.cz/zasilka/UJM9GTN5MEW7NC5R-K7X/](https://www.uschovna.cz/zasilka/UJM9GTN5MEW7NC5R-K7X/)
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
 
@@ -19,28 +19,37 @@ Hlavní .NET technologie dle mé úvahy :-) použité v aplikaci:
 * F#
 * Thoth.Json.Net
 
-Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
+CE builders, Option/Result extentions jsou mé vlastní "knihovny", takže je vkládám do VS solutions tak, jak jsou, bez ohledu na to, kolik se toho nakonec využije.
+
+Rutinní kód jsem do aplikace z časových důvodů nedával. Týká se to těchto položek:
 * logging
-* podrobné členění exceptions (můj error handling jsem tady velmi zjednodušil)
-* do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové DDD, to bych se opakoval
+* podrobné členění exceptions (svůj error handling jsem tady velmi zjednodušil)
+* do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové podobné DDD, to bych se opakoval
 * connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
+* úprava textu v informačním textboxu ("plácnul" jsem tam celý record tak jak je, i s SCDUs používaných pro Type DD)
+* testování - tady by v úvahu připadalo snad jen PBT, i když vzhledem k tomu, že používám reflection-free Thot.Json.Net, problémy by neměly být (stress testing jsem samozřejmě provedl)
+* omezení počtu položek listboxu (seznamu posledně vyhledávaných adres)
 
 Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
+
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Connectivity/Connectivity.fs
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/XElmish/ActorModels.fs
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/tree/master/Logging
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/ExceptionHandling/ExceptionHandlers.fs
 
 Používal jsem copilota?
+
 Sice ano, ale kód v aplikaci je většinou můj vlastní "pre-LLM" kód recyklovaný z těchto aplikací:
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI
 https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator
 
 Code review
+
 Na to bych potřeboval několikadenní odstup, takže to do termínu odevzdání nestihnu.
 Code review pomocí LLM mé kodovací standardy zapovězují :-). 
 
 Mé kodovací standardy:
+
 https://github.com/MiroslavHustak/FSharp-Coding-Guidelines
 
 Přeji všem hodnotitelům krásný den s F# (syntaxe a konstrukce jazyka F# je geniálně jednoduchá, kód pochopí i ten, kdo ještě F# nikdy neviděl, těžší věci (jako třeba free monad, point-free syntax, applicative functor či funkce z FSharpPlus) v kódu nejsou).
