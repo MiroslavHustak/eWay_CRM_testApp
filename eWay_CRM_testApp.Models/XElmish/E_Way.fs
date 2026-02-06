@@ -146,7 +146,8 @@ module E_Way =
                     }
     
                 match valid with
-                | Some email  ->
+                | Some email  
+                    ->
                     { 
                         updatedModel with
                             MessageDisplayText =
@@ -158,7 +159,8 @@ module E_Way =
                                         { businessCardDefault with Email = Email errMsg }
                                     )  
                     }, Cmd.none
-                | None ->
+                | None
+                    ->
                     updatedModel, Cmd.none
     
             | None -> { m with SelectedEmail = None }, Cmd.none
