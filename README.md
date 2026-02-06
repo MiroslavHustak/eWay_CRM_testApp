@@ -21,14 +21,13 @@ Hlavní .NET technologie dle mé úvahy :-) použité v aplikaci:
 
 CE builders, Option/Result extentions jsou mé vlastní "knihovny", takže je vkládám do VS solutions tak, jak jsou, bez ohledu na to, kolik se toho nakonec využije.
 
-Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
-
+Rutinní kód jsem do aplikace z časových důvodů nedával. Týká se to těchto položek:
 * logging
 * podrobné členění exceptions (svůj error handling jsem tady velmi zjednodušil)
-* do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové DDD, to bych se opakoval
+* do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové podobné DDD, to bych se opakoval
 * connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
-* úpravu textu v informačním textboxu ("plácnul" jsem tam celý record tak jak je, i s SCDUs používaných pro Type DD)
-* testování (stress testing jsem samozřejmě provedl), tady by v úvahu připadalo snad jen PBT, i když vzhledem k tomu, že používám reflection-free Thot.Json.Net, problémy by neměly být
+* úprava textu v informačním textboxu ("plácnul" jsem tam celý record tak jak je, i s SCDUs používaných pro Type DD)
+* testování - tady by v úvahu připadalo snad jen PBT, i když vzhledem k tomu, že používám reflection-free Thot.Json.Net, problémy by neměly být (stress testing jsem samozřejmě provedl)
 * omezení počtu položek listboxu (seznamu posledně vyhledávaných adres)
 
 Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
