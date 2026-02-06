@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+	 <LIB></LIB>
+	 <NoWarn>$(NoWarn);1668</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Settings\Settings.fs" />
+    <Compile Include="Types\Types.fs" />
+    <Compile Include="CEBuilders\CEBuilders.fs" />
+    <Compile Include="OptionResultExtensions\OptionExtensions.fs" />
+    <Compile Include="OptionResultExtensions\ResultExtensions.fs" />
+    <Compile Include="Connection\Connection.fs" />
+    <Compile Include="Helpers\Helpers.fs" />
+    <Compile Include="Serialization\Serialization.fs" />
+    <Compile Include="ExternalDataModelling\RawCRMDataDM.fs" />
+    <Compile Include="CoreDataModelling\BusinessCardDM.fs" />
+    <Compile Include="BusinessLogic\BusinessCard.fs" />
+    <Compile Include="XElmish\E_Way.fs" />
+    <Compile Include="XElmish\MainWindowNonOpt.fs" />
+    <Compile Include="XElmish\Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Elmish" Version="3.1.0" />
+    <PackageReference Include="Elmish.WPF" Version="4.0.0-beta-42" />
+    <PackageReference Include="eWayCRM.API" Version="1.6.4" />
+    <PackageReference Include="FSharp.Collections.ParallelSeq" Version="1.2.0" />
+    <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+    <PackageReference Include="FsToolkit.ErrorHandling" Version="5.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="10.0.102" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Include="Photos\*.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>  
+    <Folder Include="bin\Release\net9.0-windows\" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\Graphicloads-Food-Drink-Teapot.ico" />
+		<Resource Include="Resources\sunny_sun_cloud.ico" />
+	</ItemGroup>
+</Project>

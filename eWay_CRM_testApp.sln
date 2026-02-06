@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36908.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eWay_CRM_testApp", "eWay_CRM_testApp\eWay_CRM_testApp.csproj", "{6995D560-0E2C-41D2-AB54-53B6EB27E2CE}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "eWay_CRM_testApp.Models", "eWay_CRM_testApp.Models\eWay_CRM_testApp.Models.fsproj", "{01023C11-69CA-4FA9-B41B-E12AF4B37FF5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6995D560-0E2C-41D2-AB54-53B6EB27E2CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6995D560-0E2C-41D2-AB54-53B6EB27E2CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6995D560-0E2C-41D2-AB54-53B6EB27E2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6995D560-0E2C-41D2-AB54-53B6EB27E2CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01023C11-69CA-4FA9-B41B-E12AF4B37FF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01023C11-69CA-4FA9-B41B-E12AF4B37FF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01023C11-69CA-4FA9-B41B-E12AF4B37FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01023C11-69CA-4FA9-B41B-E12AF4B37FF5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		        SolutionGuid = {8E568397-D3F6-4831-8F07-2E8D2EBAF0CA}
+		SolutionGuid = {6F7C50D5-5F22-4350-BBCA-F010F3A4553D}
+	EndGlobalSection
+EndGlobal

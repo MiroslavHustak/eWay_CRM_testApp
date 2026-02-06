@@ -1,0 +1,48 @@
+﻿<Window x:Class="eWay_CRM_testApp.MainWindowNonOpt"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:eWay_CRM_testApp"
+        xmlns:models="clr-namespace:eWay_CRM_testApp.Models;assembly=eWay_CRM_testApp.Models"
+        KeyDown="OnKeyDownHandler"
+        mc:Ignorable="d"
+        d:DataContext="{x:Static models:MainWindowNonOpt.designVm}"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Resources/sunny_sun_cloud.ico"  
+        Title="eWay_CRM_testApp" Height="650" Width="840" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel Background="White">
+
+        <TabControl DockPanel.Dock="Top" 
+                    Background="White" 
+                    FontWeight="Bold" 
+                    ItemsSource="{Binding Tabs}" 
+                    SelectedValue="{Binding SelectedTabHeader, Mode=OneWayToSource}" 
+                    SelectedValuePath="Header">
+
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.ContentTemplate>
+                <DataTemplate>                 
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Auto">
+            <Grid Background="White">
+                <local:E_Way DataContext="{Binding E_WayPage}"  Loaded="E_Way_Loaded" />
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
