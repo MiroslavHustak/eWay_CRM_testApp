@@ -22,7 +22,7 @@ Hlavní .NET technologie dle mé úvahy :-) použité v aplikaci:
 Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
 
 * logging
-* podrobné členění exceptions (můj error handling jsem tady velmi zjednodušil)
+* podrobné členění exceptions (svůj error handling jsem tady velmi zjednodušil)
 * do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové DDD, to bych se opakoval
 * connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
 * úpravu textu v informačním textboxu ("plácnul" jsem tam celý record tak jak je, i s SCDU používaných pro Type DD)
