@@ -33,21 +33,21 @@ module MainWindowNonOpt =
     let private header1 = " Hlavní stránka "    
     let private newGuid () = Guid.NewGuid()
             
-    type Toolbutton =
+    type internal Toolbutton =
         {
             Id: Guid
             Text: string
             IsMarkable: bool
         }
     
-    type Tab =
+    type internal Tab =
         {
             Id: Guid
             Header: string
             Toolbuttons: Toolbutton list
         }
     
-    type Msg =
+    type internal Msg =
         | ButtonClick of id: Guid
         | ShowE_Way
         | E_WayMsg of E_Way.Msg
@@ -61,11 +61,11 @@ module MainWindowNonOpt =
             SelectedTabHeader: string
         }
                
-    let tbNone = newGuid ()
-    let tbE_Way = newGuid ()
-    //let tbLicences = newGuid ()  
+    let private tbNone = newGuid ()
+    let private tbE_Way = newGuid ()
+    //let private tbLicences = newGuid ()  
     
-    let tabs =
+    let private tabs =
         let tab header toolButtons =
             { Id = newGuid (); Header = header; Toolbuttons = toolButtons }           
         [ tab header1 []]

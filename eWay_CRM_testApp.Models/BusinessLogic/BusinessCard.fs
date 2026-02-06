@@ -1,5 +1,6 @@
 ﻿module BusinessLogic
 
+open eWayCRM.API
 open Newtonsoft.Json.Linq
 
 open Thoth.Json.Net
@@ -7,21 +8,22 @@ open FsToolkit.ErrorHandling
 
 open Types
 open Helpers
+open ErrorTypes
 open Connection
 open CoreDataModelling
+open IO_MonadSimulation
 open ExternalDataModelling
 
 //***************************************************************
  
 let private searchContactsByEmail (email: string) =
-         
-    withConnection 
-        (fun conn
-            ->
+
+    withConnection
+        (fun (conn: Connection)
+            -> 
             option
                 {
-                    let! email = isValidEmail email
-
+                    let! email = isValidEmail >> runIO <| email
                     let transmitObject = JObject()
                     transmitObject.Add("Email1Address", JValue email)
  
@@ -40,22 +42,29 @@ let private searchContactsByEmail (email: string) =
                         |> ContactTransform.toJson
                 }
         )
-
+   
 let internal getUniqueData email =
 
-    result 
-        {
-            let! json = searchContactsByEmail email |> Option.toResult "Nebylo možno získat data. Ověř připojení k CRM."//"""{ "Data": [] }"""
-            let! contacts = Decode.fromString contactsDecoder json
-
-            return!  
-                contacts
-                |> List.map toBusinessCard
-                |> List.tryFind 
-                    (fun card
-                        ->
-                        let (Email e) = card.Email
-                        e = email
-                    )
-                |> Option.toResult "Nebylo možno získat data z CRM na základě příslušného emailu."
-        }
+    IO (fun () ->    
+        result 
+            {
+                let! json = 
+                    searchContactsByEmail email
+                    |> runIO
+                    |> Option.toResult ConnectionError
+                
+                let! contacts = 
+                    Decode.fromString contactsDecoder json
+                    |> Result.mapError (fun _ -> DeserializationError)
+                
+                return!  
+                    contacts
+                    |> List.map toBusinessCard
+                    |> List.tryFind 
+                        (fun card ->
+                            let (Email e) = card.Email
+                            e = email
+                        )
+                    |> Option.toResult CRMError
+            }
+    )

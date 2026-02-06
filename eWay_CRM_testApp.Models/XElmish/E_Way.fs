@@ -9,10 +9,14 @@ open FsToolkit.ErrorHandling
 
 open Types
 open Helpers
+open Settings
 open CEBuilders
+open ErrorTypes
 open BusinessLogic
 open Serialization
+open ErrorHandling
 open CoreDataModelling
+open IO_MonadSimulation
 
 //***************************************************************
 
@@ -30,8 +34,8 @@ module E_Way =
     type Msg =
         | EmailInputStringChanged of string
         | EmailSelected of string option
-        | EmailsLoaded of Result<string list, string>
-        | EmailsSaved of Result<unit, string>
+        | EmailsLoaded of Result<string list, Errors>
+        | EmailsSaved of Result<unit, Errors>
         | ShowData    
       
     let internal initialModel listOfEmails =
@@ -43,21 +47,21 @@ module E_Way =
             ErrorMessage = None
         }
 
-    let loadEmailsCmd () =
+    let internal loadEmailsCmd () =
         Cmd.OfAsync.perform
-            (fun () -> deserializeWithThothAsync "emails.json")
+            (fun () -> deserializeWithThothAsync >> runIO <| pathToJson)
             ()
             EmailsLoaded  
 
-    let saveEmailsCmd newEmails =
+    let internal saveEmailsCmd newEmails =
         Cmd.OfAsync.perform
-            (fun () -> serializeWithThothAsync newEmails "emails.json")
+            (fun () -> runIO <| serializeWithThothAsync newEmails pathToJson)
             ()
             EmailsSaved
     
     let internal init () : Model * Cmd<Msg> =
 
-        let initialEmailList =  //pro testovani aplikace
+        let initialEmailList =  //for testing only
             [
                 "mroyster@royster.com"
                 "ealbares@gmail.com"
@@ -75,13 +79,12 @@ module E_Way =
         match msg with
         | EmailsLoaded (Ok emails) 
             ->
-            // Replace the initial list with loaded emails
             { m with EmailAddresses = emails }, Cmd.none
         
         | EmailsLoaded (Error err) 
             ->
-            // Keep using initialEmailList (already in model)
-            { m with ErrorMessage = Some "Kontakty nebyly načteny." }, Cmd.none
+            let errMsg = errFn err
+            { m with ErrorMessage = Some errMsg }, Cmd.none
 
         | EmailsSaved (Ok _) 
             ->
@@ -89,34 +92,39 @@ module E_Way =
 
         | EmailsSaved (Error err) 
             ->
-            { m with ErrorMessage = Some "Kontakty nebyly uloženy." }, Cmd.none
+            let errMsg = errFn err
+            { m with ErrorMessage = Some errMsg }, Cmd.none
 
         | EmailInputStringChanged email
             ->
             let typedEmail = email.Trim()
         
-            // Only update email list if valid
             let newEmails =
                 pyramidOfDoom
                     {
-                        let! validEmail = isValidEmail typedEmail, m.EmailAddresses
+                        let! validEmail = isValidEmail >> runIO <| typedEmail, m.EmailAddresses
                         let cond = (validEmail <> String.Empty && not (m.EmailAddresses |> List.contains validEmail))
                         let! _ = cond |> Option.ofBool, m.EmailAddresses
                         return typedEmail :: m.EmailAddresses 
                     }
            
             let errorMsg =
-                isValidEmail typedEmail
+                isValidEmail >> runIO <| typedEmail
                 |> Option.map (fun _ -> None)  // Valid -> None (no error)
-                |> Option.defaultValue (Some "Chybný formát emailu.")  // Invalid -> Some error
+                |> Option.defaultValue (Some <| errFn UserInputError1)  // Invalid -> Some error
         
             {
                 m with
                     EmailInputString = typedEmail
-                    EmailAddresses   = newEmails
+                    EmailAddresses = newEmails
                     MessageDisplayText =
-                        getUniqueData typedEmail
-                        |> Result.defaultValue { businessCardDefault with Email = Email "Chybný formát emailu." }                  
+                        getUniqueData >> runIO <| typedEmail
+                        |> Result.defaultWith
+                            (fun err 
+                                -> 
+                                let errMsg2 = errFn err
+                                { businessCardDefault with Email = Email errMsg2 }   
+                            )
                     ErrorMessage = errorMsg
             }, saveEmailsCmd newEmails
     
@@ -125,7 +133,7 @@ module E_Way =
             match emailOpt with
             | Some email
                 ->
-                let valid = isValidEmail email
+                let valid = isValidEmail >> runIO <| email
                 let updatedModel =
                     { 
                         m with
@@ -134,17 +142,21 @@ module E_Way =
                             ErrorMessage = 
                                 valid 
                                 |> Option.map (fun _ -> None)
-                                |> Option.defaultValue (Some "Chybný formát emailu.")
+                                |> Option.defaultValue (Some <| errFn UserInputError1)
                     }
     
                 match valid with
                 | Some email  ->
-                    // Update business card only if valid
                     { 
                         updatedModel with
                             MessageDisplayText =
-                                getUniqueData email 
-                                |> Result.defaultWith (fun err -> { businessCardDefault with Email = Email err } )  
+                                getUniqueData >> runIO <| email 
+                                |> Result.defaultWith
+                                    (fun err 
+                                        -> 
+                                        let errMsg = errFn err
+                                        { businessCardDefault with Email = Email errMsg }
+                                    )  
                     }, Cmd.none
                 | None ->
                     updatedModel, Cmd.none
@@ -159,11 +171,11 @@ module E_Way =
                 {
                     let! _ = 
                         (typedEmail <> String.Empty, 
-                         ({ m with ErrorMessage = Some "Prosím zadejte platný email." }, Cmd.none))
+                         ({ m with ErrorMessage = Some <| errFn UserInputError2 }, Cmd.none)) 
                 
                     let! _ = 
-                        (isValidEmail typedEmail |> Option.toBool,
-                         ({ m with ErrorMessage = Some "Chybný formát emailu." }, Cmd.none))
+                        ((isValidEmail >> runIO <| typedEmail) |> Option.toBool,
+                         ({ m with ErrorMessage = Some <| errFn UserInputError1 }, Cmd.none))
                 
                     let updatedEmails =
                         match not (m.EmailAddresses |> List.contains typedEmail) with
@@ -174,8 +186,12 @@ module E_Way =
                         {
                             m with
                                 MessageDisplayText = 
-                                    getUniqueData typedEmail
-                                    |> Result.defaultWith (fun err -> { businessCardDefault with Email = Email err } )  
+                                    getUniqueData >> runIO <| typedEmail
+                                    |> Result.defaultWith 
+                                        (fun err
+                                            -> 
+                                            let errMsg = errFn err
+                                            { businessCardDefault with Email = Email errMsg } )  
                                 EmailAddresses = updatedEmails
                                 ErrorMessage = None
                         }, Cmd.none

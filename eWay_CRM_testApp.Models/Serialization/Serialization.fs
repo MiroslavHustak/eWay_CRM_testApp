@@ -4,57 +4,66 @@ open System.IO
 
 open Thoth.Json.Net
 open FsToolkit.ErrorHandling
- 
-//open Types.Haskell_IO_Monad_Simulation
+
+open ErrorTypes
+open IO_MonadSimulation
+
+//********************************************************
 
 let internal safeFullPathResult path =
-        
-    try
-        Path.GetFullPath path
-        |> Option.ofNullEmpty 
-        |> Option.toResult "Failed getting path"  
-    with
-    | ex -> Error <| sprintf "Path is invalid: %s" (string ex.Message)
+
+    IO (fun () ->   
+        try
+            Path.GetFullPath path
+            |> Option.ofNullEmpty 
+            |> Option.toResult FileNotExisting  
+        with
+        | _ -> Error FileNotExisting
+    )
       
-let internal serializeWithThothAsync (emails: string list) (path : string) : Async<Result<unit, string>> =
-       
-    try   
-        let json: string =
-            emails
-            |> List.map Encode.string
-            |> Encode.list
-            |> Encode.toString 4
+let internal serializeWithThothAsync (emails: string list) (path : string) =
 
-        asyncResult 
-            {
-                let! path = safeFullPathResult path                                
-                use writer = new StreamWriter(path, append = false)
-                return! writer.WriteAsync json |> Async.AwaitTask
-            }
-    with
-    | ex -> async { return Error <| string ex.Message }
+    IO (fun () ->   
+        try   
+            let json: string =
+                emails
+                |> List.map Encode.string
+                |> Encode.list
+                |> Encode.toString 4
+
+            asyncResult 
+                {
+                    let! path = safeFullPathResult >> runIO <| path                                
+                    use writer = new StreamWriter(path, append = false)
+                    return! writer.WriteAsync json |> Async.AwaitTask
+                }
+        with
+        | _ -> async { return Error SerializationError }
+    )
 
 
-let internal deserializeWithThothAsync (path: string) : Async<Result<string list, string>> =
+let internal deserializeWithThothAsync (path: string) =
 
-    try 
-        asyncResult
-            {
-                let! fullPath = safeFullPathResult path
+    IO (fun () ->   
+        try 
+            asyncResult
+                {
+                    let! fullPath = safeFullPathResult >> runIO <| path
         
-                // TODO: Verify TOCTOU effect
-                do! File.Exists fullPath 
-                    |> Result.fromBool fullPath "File does not exist" 
-                    |> Result.ignore<string, string>
+                    // TODO: Verify TOCTOU effect
+                    do! File.Exists fullPath 
+                        |> Result.fromBool fullPath FileNotExisting
+                        |> Result.ignore<string, Errors>
         
-                use reader = new StreamReader(fullPath)
-                let! json = reader.ReadToEndAsync() |> Async.AwaitTask
+                    use reader = new StreamReader(fullPath)
+                    let! json = reader.ReadToEndAsync() |> Async.AwaitTask
         
-                let! emails = 
-                    Decode.fromString (Decode.list Decode.string) json
-                    |> Result.mapError (sprintf "Failed to decode: %s")
+                    let! emails = 
+                        Decode.fromString(Decode.list Decode.string) json
+                        |> Result.mapError (fun _ -> DeserializationError)
         
-                return emails
-            }
-    with
-    | ex -> async { return Error <| string ex.Message }
+                    return emails
+                }
+        with
+        | _ -> async { return Error DeserializationError }
+    )

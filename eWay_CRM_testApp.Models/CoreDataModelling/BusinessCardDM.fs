@@ -3,6 +3,8 @@
 open Thoth.Json.Net
 
 open Types
+open Helpers
+open IO_MonadSimulation
 
 //=============================================================================
 // eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data )
@@ -44,7 +46,7 @@ let internal businessCardDefault =
         Address = Address "N/A"
         Phone = Phone "N/A"
         Email = Email "N/A"
-        Photo = PhotoPath "placeholder.jpg" 
+        Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
     }
 
 // Transformation Layer 
@@ -78,5 +80,5 @@ let internal toBusinessCard (dto: ContactDto) : BusinessCard =
         Address = dto.Address |> orDefault "N/A" |> Address
         Phone = dto.Phone |> orDefault "N/A" |> Phone
         Email = dto.Email |> orDefault "N/A" |> Email
-        Photo = dto.Photo |> orDefault "placeholder.jpg" |> PhotoPath 
+        Photo = dto.Photo |> orDefault (randomPlaceholderPhotoPath >> runIO <| ()) |> PhotoPath 
     }

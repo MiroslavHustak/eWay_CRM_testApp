@@ -111,7 +111,7 @@ namespace eWay_CRM_testApp
             if (!File.Exists(fullPath))
             {
                 // fallback to placeholder if file not found
-                fullPath = Path.Combine(photosDir, "placeholder.jpg");
+                fullPath = Path.Combine(photosDir, "placeholder1.jpg");
                 Debug.WriteLine($"PhotoPathToUriConverter: Using placeholder: {fullPath}");
 
                 if (!File.Exists(fullPath))

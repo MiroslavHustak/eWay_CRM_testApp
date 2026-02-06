@@ -49,7 +49,7 @@ type Contact =
 
 module ContactTransform =
     
-    let toDomain (dto: ContactDto) : Contact =
+    let internal  toDomain (dto: ContactDto) : Contact =
         { 
             Name2 = dto.Name2 |> Option.defaultValue String.Empty
             Email = dto.Email1Address |> Option.defaultValue String.Empty
@@ -57,7 +57,7 @@ module ContactTransform =
             Company = dto.CompanyName |> Option.defaultValue String.Empty
         }
     
-    let toJson (contacts: Contact list) : string =
+    let internal toJson (contacts: Contact list) : string =
         Encode.toString 2
             (
                 Encode.object 

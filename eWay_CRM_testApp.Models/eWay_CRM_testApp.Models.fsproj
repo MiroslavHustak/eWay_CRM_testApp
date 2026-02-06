@@ -9,7 +9,10 @@
 
   <ItemGroup>
     <Compile Include="Settings\Settings.fs" />
+    <Compile Include="Types\ErrorTypes.fs" />
+    <Compile Include="Types\IO_MonadSimulation.fs" />
     <Compile Include="Types\TDD.fs" />
+    <Compile Include="ErrorHandling\ErrorHandling.fs" />
     <Compile Include="CEBuilders\CEBuilders.fs" />
     <Compile Include="OptionResultExtensions\OptionExtensions.fs" />
     <Compile Include="OptionResultExtensions\ResultExtensions.fs" />
