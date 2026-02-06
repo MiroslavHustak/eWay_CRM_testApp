@@ -20,5 +20,6 @@ let internal isValidEmail (email: string) =
             let! emailRegex = emailRegex
             let! _ = email |> Option.ofNullEmptySpace
             let! _ = emailRegex.IsMatch email |> Option.ofBool
+
             return! email
         }

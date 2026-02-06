@@ -5,7 +5,7 @@ open System
 open Thoth.Json.Net
 
 //=============================================================================
-// raw eWay CRM <-> My app contact data )
+// Raw eWay CRM <-> My app contact data 
 //=============================================================================
 
 // DTO

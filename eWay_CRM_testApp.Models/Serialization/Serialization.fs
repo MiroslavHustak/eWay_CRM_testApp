@@ -37,21 +37,24 @@ let internal serializeWithThothAsync (emails: string list) (path : string) : Asy
 
 let internal deserializeWithThothAsync (path: string) : Async<Result<string list, string>> =
 
-    asyncResult
-        {
-            let! fullPath = safeFullPathResult path
+    try 
+        asyncResult
+            {
+                let! fullPath = safeFullPathResult path
         
-            // TODO: Verify TOCTOU effect
-            do! File.Exists fullPath 
-                |> Result.fromBool fullPath "File does not exist" 
-                |> Result.ignore
+                // TODO: Verify TOCTOU effect
+                do! File.Exists fullPath 
+                    |> Result.fromBool fullPath "File does not exist" 
+                    |> Result.ignore<string, string>
         
-            use reader = new StreamReader(fullPath)
-            let! json = reader.ReadToEndAsync() |> Async.AwaitTask
+                use reader = new StreamReader(fullPath)
+                let! json = reader.ReadToEndAsync() |> Async.AwaitTask
         
-            let! emails = 
-                Decode.fromString (Decode.list Decode.string) json
-                |> Result.mapError (sprintf "Failed to decode: %s")
+                let! emails = 
+                    Decode.fromString (Decode.list Decode.string) json
+                    |> Result.mapError (sprintf "Failed to decode: %s")
         
-            return emails
-        }
+                return emails
+            }
+    with
+    | ex -> async { return Error <| string ex.Message }

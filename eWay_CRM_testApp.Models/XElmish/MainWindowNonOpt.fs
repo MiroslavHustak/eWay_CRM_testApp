@@ -13,6 +13,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 *)    
+
 namespace eWay_CRM_testApp.Models
 
 open System
@@ -82,7 +83,13 @@ module MainWindowNonOpt =
     let internal init () : Model * Cmd<Msg> = startModel, Cmd.map E_WayMsg e_WayPageCmd
     
     let internal findButton (id: Guid) (m: Model) =
-        m.Tabs |> List.tryPick (fun tab -> tab.Toolbuttons |> List.tryFind (fun tb -> tb.Id = id))
+        m.Tabs
+        |> List.tryPick 
+            (fun tab 
+                ->
+                tab.Toolbuttons 
+                |> List.tryFind (fun tb -> tb.Id = id)
+            )
     
     let internal update (msg: Msg) (m: Model) = 
         match msg with
