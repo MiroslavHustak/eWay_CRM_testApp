@@ -19,6 +19,8 @@ Hlavní .NET technologie dle mé úvahy :-) použité v aplikaci:
 * F#
 * Thoth.Json.Net
 
+CE builders, Option/Result extentions jsou mé vlastní "knihovny", takže je vkládám tak, jak jsou, bez ohledu na to, kolik se toho nakonec využije.
+
 Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
 
 * logging
