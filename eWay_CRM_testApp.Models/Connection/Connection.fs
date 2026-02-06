@@ -3,12 +3,9 @@
 open eWayCRM.API
 open Newtonsoft.Json.Linq
 
-//*****************************************************************************
+open Settings
 
-let [<Literal>] internal SERVICE_URL = "https://free.eway-crm.com/31994"
-let [<Literal>] internal USERNAME = "api"
-let [<Literal>] internal PASSWORD = "ApiTrial@eWay-CRM"
-let [<Literal>] internal APP_ID = "ExampleApplication100"
+//*****************************************************************************
  
 let private establishConnection() = new Connection(SERVICE_URL, USERNAME, Connection.HashPassword(PASSWORD), APP_ID)
 

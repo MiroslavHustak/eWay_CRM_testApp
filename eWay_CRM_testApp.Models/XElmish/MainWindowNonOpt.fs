@@ -52,7 +52,7 @@ module MainWindowNonOpt =
         | E_WayMsg of E_Way.Msg
         | SetSelectedTabHeader of tabHeader:string
     
-    type Model =
+    type internal Model =
         {
             Tabs: Tab list
             MarkedButton: Guid
@@ -69,9 +69,9 @@ module MainWindowNonOpt =
             { Id = newGuid (); Header = header; Toolbuttons = toolButtons }           
         [ tab header1 []]
         
-    let e_WayPage, (e_WayPageCmd: Cmd<E_Way.Msg>) = E_Way.init ()
+    let internal e_WayPage, (e_WayPageCmd: Cmd<E_Way.Msg>) = E_Way.init ()
         
-    let startModel =
+    let internal startModel =
         {
             Tabs = tabs
             MarkedButton = tbE_Way           
@@ -79,12 +79,12 @@ module MainWindowNonOpt =
             SelectedTabHeader = (tabs |> List.item 0).Header
         }
     
-    let init () : Model * Cmd<Msg> = startModel, Cmd.map E_WayMsg e_WayPageCmd
+    let internal init () : Model * Cmd<Msg> = startModel, Cmd.map E_WayMsg e_WayPageCmd
     
-    let findButton (id: Guid) (m: Model) =
+    let internal findButton (id: Guid) (m: Model) =
         m.Tabs |> List.tryPick (fun tab -> tab.Toolbuttons |> List.tryFind (fun tb -> tb.Id = id))
     
-    let update (msg: Msg) (m: Model) = 
+    let internal update (msg: Msg) (m: Model) = 
         match msg with
         | ButtonClick id 
             ->
@@ -121,7 +121,7 @@ module MainWindowNonOpt =
                 -> { m with MarkedButton = tbE_Way; SelectedTabHeader = value }, Cmd.ofMsg ShowE_Way 
             | _ -> { m with SelectedTabHeader = header }, Cmd.none
 
-    let bindings () : Binding<Model, Msg> list =
+    let internal bindings () : Binding<Model, Msg> list =
         [            
             "Tabs"
             |> Binding.subModelSeq

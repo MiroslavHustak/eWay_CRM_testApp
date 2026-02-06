@@ -11,7 +11,7 @@ open Types
  // DTO
 //*********************************************
 
-type ContactDto =
+type internal ContactDto =
     {
         Name: string option
         Email: string option
@@ -25,7 +25,7 @@ type ContactDto =
 // Domain Model
 //*********************************************
 
-type BusinessCard =
+type internal BusinessCard =
     {
         Name: Name
         Position: Position

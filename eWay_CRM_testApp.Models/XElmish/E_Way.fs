@@ -18,7 +18,7 @@ open CoreDataModelling
 
 module E_Way =
 
-    type Model =
+    type internal Model =
         { 
               MessageDisplayText: BusinessCard
               EmailInputString: string
@@ -34,7 +34,7 @@ module E_Way =
         | EmailsSaved of Result<unit, string>
         | ShowData    
       
-    let initialModel listOfEmails =
+    let internal initialModel listOfEmails =
         {
             MessageDisplayText = businessCardDefault
             EmailInputString = String.Empty
@@ -55,7 +55,7 @@ module E_Way =
             ()
             EmailsSaved
     
-    let init () : Model * Cmd<Msg> =
+    let internal init () : Model * Cmd<Msg> =
 
         let initialEmailList =  //pro testovani aplikace
             [
@@ -71,7 +71,7 @@ module E_Way =
         let m = initialModel initialEmailList  // Start with default/empty list
         m, loadEmailsCmd ()
     
-    let update msg m =
+    let internal update msg m =
         match msg with
         | EmailsLoaded (Ok emails) 
             ->
@@ -181,7 +181,7 @@ module E_Way =
                         }, Cmd.none
                 }
 
-    let bindings () : Binding<Model, Msg> list =
+    let internal bindings () : Binding<Model, Msg> list =
         [
             "MessageDisplayText"
             |> Binding.oneWay (fun m -> m.MessageDisplayText)
