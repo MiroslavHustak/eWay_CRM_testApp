@@ -1,7 +1,6 @@
 ﻿module Helpers
 
 open FsToolkit.ErrorHandling
-
 open System.Text.RegularExpressions
 
 open IO_MonadSimulation

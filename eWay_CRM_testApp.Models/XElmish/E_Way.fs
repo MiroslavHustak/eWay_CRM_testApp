@@ -173,11 +173,11 @@ module E_Way =
                 {
                     let! _ = 
                         (typedEmail <> String.Empty, 
-                         ({ m with ErrorMessage = Some <| errFn UserInputError2 }, Cmd.none)) 
+                            ({ m with ErrorMessage = Some <| errFn UserInputError2 }, Cmd.none)) 
                 
                     let! _ = 
                         ((isValidEmail >> runIO <| typedEmail) |> Option.toBool,
-                         ({ m with ErrorMessage = Some <| errFn UserInputError1 }, Cmd.none))
+                            ({ m with ErrorMessage = Some <| errFn UserInputError1 }, Cmd.none))
                 
                     let updatedEmails =
                         match not (m.EmailAddresses |> List.contains typedEmail) with
@@ -193,7 +193,8 @@ module E_Way =
                                         (fun err
                                             -> 
                                             let errMsg = errFn err
-                                            { businessCardDefault with Email = Email errMsg } )  
+                                            { businessCardDefault with Email = Email errMsg } 
+                                        )  
                                 EmailAddresses = updatedEmails
                                 ErrorMessage = None
                         }, Cmd.none
@@ -219,7 +220,7 @@ module E_Way =
             |> Binding.twoWay
                 (
                     (fun m -> m.EmailInputString),
-                    EmailInputStringChanged
+                        EmailInputStringChanged
                 )
     
             "EmailAddresses"
@@ -229,7 +230,7 @@ module E_Way =
             |> Binding.twoWayOpt
                 (
                     (fun m -> m.SelectedEmail),
-                    EmailSelected
+                        EmailSelected
                 )
 
             "ErrorMessage"

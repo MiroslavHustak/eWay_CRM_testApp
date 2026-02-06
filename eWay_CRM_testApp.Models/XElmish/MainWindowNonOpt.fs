@@ -27,7 +27,7 @@ open eWay_CRM_testApp.Models
 
 //*******************************************
     
-//Non-optional variant
+//Non-option variant
 module MainWindowNonOpt =
     
     let private header1 = " Hlavní stránka "    

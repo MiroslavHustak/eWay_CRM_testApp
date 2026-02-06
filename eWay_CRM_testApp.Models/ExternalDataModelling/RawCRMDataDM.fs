@@ -68,7 +68,7 @@ module ContactTransform =
                                 contacts 
                                 |> List.map 
                                     (fun c
-                                      ->
+                                        ->
                                         Encode.object 
                                             [
                                                 "Name2", Encode.string c.Name2
