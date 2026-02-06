@@ -1,7 +1,7 @@
 Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace.
 
 Pokud by byl problém s GitHubem (např. s adresářem s fotografiemi kotaktů), kompletní VS solution je možno stáhnout zde:
-https://
+[https://](https://www.uschovna.cz/zasilka/UJM9GTN5MEW7NC5R-K7X/)
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
 
