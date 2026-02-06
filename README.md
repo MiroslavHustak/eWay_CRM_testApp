@@ -25,6 +25,8 @@ Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
 * podrobné členění exceptions (můj error handling jsem tady velmi zjednodušil)
 * do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové DDD, to bych se opakoval
 * connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
+* úpravu textu v informačním textboxu ("plácnul" jsem tam celý record tak jak je, i s SCDU používaných pro Type DD)
+* testování (stress testing jsem samozřejmě provedl), tady by v úvahu připadalo snad jen PBT, i když vzhledem k tomu, že používám reflection-free Thot.Json.Net, problémy by neměly být
 
 Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
 
