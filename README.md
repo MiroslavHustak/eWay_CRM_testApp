@@ -3,6 +3,8 @@ Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace
 Pokud by byl problém s GitHubem (např. s adresářem s fotografiemi kotaktů), kompletní VS solution je možno stáhnout zde:
 https://
 
+Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
+
 Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání na C#, v podstatě většinou UX/UI/FE s něco málo BE, i když všude píši, že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
 
 Tož jsem sice dané zadání zpracoval, ale pokud byste mi ještě poslali testovací zadání pro SQL, příp. i s ADO NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB), budu rád.
@@ -21,11 +23,13 @@ Rutinní kód jsem do aplikace z časových důvodů nedával, což je:
 * logging
 * podrobné členění exceptions (můj error handling jsem tady velmi zjednodušil)
 * do/dto/transformační layer u serializace/deserializace na/z HD, v kódu už jsou dvě takové DDD, to bych se opakoval
+* connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
 
-Rovněž tam není connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM.
 Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Connectivity/Connectivity.fs
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/XElmish/ActorModels.fs
+https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/tree/master/Logging
+https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/ExceptionHandling/ExceptionHandlers.fs
 
 Používal jsem copilota?
 Sice ano, ale kód v aplikaci je většinou můj vlastní "pre-LLM" kód recyklovaný z těchto aplikací:
