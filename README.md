@@ -1,6 +1,6 @@
 Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace.
 
-Pokud by byl problém s GitHubem (např. s adresářem s fotografiemi kontaktů), kompletní VS solution je možno stáhnout zde:
+Adresář se simulovanými fotografiemi kontaktů je v binu, takže jej na GitHubu nenaleznete, ale kompletní VS solution je možno stáhnout zde:
 [https://www.uschovna.cz/zasilka/UJM9GTN5MEW7NC5R-K7X/](https://www.uschovna.cz/zasilka/UJM9GTN5MEW7NC5R-K7X/)
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
