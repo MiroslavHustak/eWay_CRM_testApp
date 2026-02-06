@@ -29,7 +29,7 @@ let private searchContactsByEmail (email: string) =
  
                     let request = JObject()
                     request.Add("transmitObject", transmitObject)
-                    request.Add("includeProfilePictures", JValue false)
+                    request.Add("includeProfilePictures", JValue true)
 
                     let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
                     let! data = response.["Data"] |> Option.ofNull
@@ -61,7 +61,8 @@ let internal getUniqueData email =
                     contacts
                     |> List.map toBusinessCard
                     |> List.tryFind 
-                        (fun card ->
+                        (fun card 
+                            ->
                             let (Email e) = card.Email
                             e = email
                         )

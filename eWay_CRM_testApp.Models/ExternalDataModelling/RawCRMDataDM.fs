@@ -76,7 +76,7 @@ module ContactTransform =
                                                 "Phone", Encode.string c.Phone
                                                 "Company", Encode.string c.Company
                                             ]
-                                )
+                                    )
                             )
                     ]
             )

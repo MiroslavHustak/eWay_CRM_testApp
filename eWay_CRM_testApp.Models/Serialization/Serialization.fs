@@ -59,7 +59,7 @@ let internal deserializeWithThothAsync (path: string) =
                     let! json = reader.ReadToEndAsync() |> Async.AwaitTask
         
                     let! emails = 
-                        Decode.fromString(Decode.list Decode.string) json
+                        Decode.fromString (Decode.list Decode.string) json
                         |> Result.mapError (fun _ -> DeserializationError)
         
                     return emails
