@@ -9,7 +9,7 @@ Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista 
 
 Tož jsem sice dané zadání zpracoval, ale pokud byste mi ještě poslali zadání pro SQL, příp. i s ADO.NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB, kde dá demonstrovat práce s type providers), budu rád.
 
-Z výše uvedených důvodů je zbytečné hodnotit můj kód v XAML a grafickou úroveň aplikace, vypadá jak vypadá. Prosím zaměřte se hlavně na BE a přechod FE/BE.
+Z výše uvedených důvodů je zbytečné hodnotit můj kód v XAML a grafickou úroveň aplikace, vypadá jak vypadá, jsem si toho vědom :-). Prosím zaměřte se hlavně na BE a přechod FE/BE.
 
 Z formálního hlediska aplikace splňuje zadání (C# plus .NET technologie dle vlastní úvahy), neb C# tam je, ale jen pro okrajové interoperatibilní záležitosti, navíc většinou generovaný danou technologií (moje jsou tam snad jen 2-3 řádky) či psaný někým jiným.
 
