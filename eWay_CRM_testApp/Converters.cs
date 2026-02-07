@@ -103,10 +103,12 @@ namespace eWay_CRM_testApp
             string photosDir = Path.Combine(exeDir, "Photos");
             string fullPath = Path.Combine(photosDir, fileName);
 
+            /*
             Debug.WriteLine($"PhotoPathToUriConverter: BaseDirectory: {exeDir}");
             Debug.WriteLine($"PhotoPathToUriConverter: Photos directory: {photosDir}");
             Debug.WriteLine($"PhotoPathToUriConverter: Full path: {fullPath}");
             Debug.WriteLine($"PhotoPathToUriConverter: File exists: {File.Exists(fullPath)}");
+            */
 
             if (!File.Exists(fullPath))
             {

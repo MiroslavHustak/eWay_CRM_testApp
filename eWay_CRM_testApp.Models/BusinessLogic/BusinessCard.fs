@@ -17,32 +17,7 @@ open ExternalDataModelling
 //***************************************************************
  
 let private searchContactsByEmail (email: string) =
-    (*
-    withConnection
-        (fun (conn: Connection)
-            -> 
-            option
-                {
-                    let! email = isValidEmail >> runIO <| email
-                    let transmitObject = JObject()
-                    transmitObject.Add("Email1Address", JValue email)
  
-                    let request = JObject()
-                    request.Add("transmitObject", transmitObject)
-                    request.Add("includeProfilePictures", JValue true)
-
-                    let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
-                    let! data = response.["Data"] |> Option.ofNull
-                    let! dataStr = data.ToString() |> Option.ofNull
-                    let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
-            
-                    return 
-                        dtos
-                        |> List.map ContactTransform.toDomain
-                        |> ContactTransform.toJson
-                }
-        )
-        *)
      withConnection
         (fun (conn: Connection)
             -> 
@@ -69,22 +44,22 @@ let private searchContactsByEmail (email: string) =
                     (*
                     System.Diagnostics.Debug.WriteLine("=== DATA ARRAY ===")
                     System.Diagnostics.Debug.WriteLine(data.ToString())
-                    *)
-                    (*
+                  
                     let!_ = 
                         data.HasValues 
                         |> Option.fromBool
-                            ( 
-                               
+                            (                                
                                 let firstContact = data.First :?> JObject
                                 System.Diagnostics.Debug.WriteLine("=== AVAILABLE FIELDS ===")
-                                
+                               
                                 firstContact.Properties()
-                                |> Seq.iter (fun prop ->
-                                    let valuePreview = 
-                                        let v = prop.Value.ToString()
-                                        match v.Length > 100 with true -> v.Substring(0, 100) + "..." | false -> v
-                                    System.Diagnostics.Debug.WriteLine(sprintf "Field: %s = %s" prop.Name valuePreview)
+                                |> Seq.iter 
+                                    (fun prop 
+                                        ->
+                                        prop.Value.ToString()
+                                        |> fun v -> match v.Length > 100 with true -> v.Substring(0, 100) + "..." | false -> v
+                                        |> sprintf "Field: %s = %s" prop.Name
+                                        |> System.Diagnostics.Debug.WriteLine
                                 )
                                 
                                 System.Diagnostics.Debug.WriteLine("=== END FIELDS ===")
@@ -96,23 +71,18 @@ let private searchContactsByEmail (email: string) =
                     return 
                         dtos
                         |> List.map ContactTransform.toDomain
-                        |> ContactTransform.toJson
                 }
         )
-   
+
 let internal getUniqueData email =
 
     IO (fun () ->    
         result 
             {
-                let! json = 
+                let! contacts = 
                     searchContactsByEmail email
                     |> runIO
                     |> Option.toResult ConnectionError
-                
-                let! contacts = 
-                    Decode.fromString contactsDecoder json
-                    |> Result.mapError (fun _ -> DeserializationError)
                 
                 return!  
                     contacts

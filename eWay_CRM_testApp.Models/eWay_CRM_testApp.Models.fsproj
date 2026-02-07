@@ -17,6 +17,7 @@
     <Compile Include="OptionResultExtensions\OptionExtensions.fs" />
     <Compile Include="OptionResultExtensions\ResultExtensions.fs" />
     <Compile Include="Connection\Connection.fs" />
+    <Compile Include="Helpers\ImageHelper.fs" />
     <Compile Include="Helpers\Helpers.fs" />
     <Compile Include="Serialization\Serialization.fs" />
     <Compile Include="ExternalDataModelling\RawCRMDataDM.fs" />

@@ -1,23 +1,27 @@
 ﻿module CoreDataModelling
-open Thoth.Json.Net
 open Types
 open Helpers
 open IO_MonadSimulation
+open ExternalDataModelling 
 
 //=============================================================================
-// eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data )
+// eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data)
 //=============================================================================
 
 // DTO
 //*********************************************
 type internal ContactDto =
     {
-        Name: string option
-        Email: string option
-        Phone: string option
-        Company: string option
-        Title: string option
-        Address: string option
+        FirstName: string
+        LastName: string
+        FullName: string
+        Email: string
+        Phone: string
+        Street: string
+        City: string
+        State: string
+        PostalCode: string
+        FullAddress: string
         Photo: string option
     }
 
@@ -45,34 +49,37 @@ let internal businessCardDefault =
         Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
     }
 
-// Transformation Layer 
+// Transformation Layer (Direct, no JSON)
 //*********************************************
-let private contactDecoder : Decoder<ContactDto> =
-    Decode.object
-        (fun get ->
-            {
-                Name = get.Optional.Field "FullName" Decode.string  // Changed from "Name"
-                Email = get.Optional.Field "Email" Decode.string
-                Phone = get.Optional.Field "Phone" Decode.string
-                Company = get.Optional.Field "Company" Decode.string
-                Title = get.Optional.Field "Title" Decode.string
-                Address = get.Optional.Field "FullAddress" Decode.string  // Changed from "Address"
-                Photo = get.Optional.Field "Photo" Decode.string 
-            }
-        )
-
-let internal contactsDecoder : Decoder<ContactDto list> =
-    Decode.field "Data" (Decode.list contactDecoder)
+let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
+    {
+        FirstName = contact.FirstName
+        LastName = contact.LastName
+        FullName = contact.FullName
+        Email = contact.Email
+        Phone = contact.Phone
+        Street = contact.Street
+        City = contact.City
+        State = contact.State
+        PostalCode = contact.PostalCode
+        FullAddress = contact.FullAddress
+        Photo = contact.ProfilePicture
+    }
 
 let private orDefault def = Option.defaultValue def
 
-let internal toBusinessCard (dto: ContactDto) : BusinessCard =
+let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessCard =
+    let dto = toDto contact  // Transform to DTO first
+    
     { 
-        Name = dto.Name |> orDefault "N/A" |> Name
-        Position = dto.Title |> orDefault "N/A" |> Position
-        CompanyName = dto.Company |> orDefault "N/A" |> CompanyName
-        Address = dto.Address |> orDefault "N/A" |> Address
-        Phone = dto.Phone |> orDefault "N/A" |> Phone
-        Email = dto.Email |> orDefault "N/A" |> Email
-        Photo = dto.Photo |> orDefault (randomPlaceholderPhotoPath >> runIO <| ()) |> PhotoPath 
+        Name = dto.FullName |> Name
+        Position = Position "N/A"
+        CompanyName = CompanyName "N/A"
+        Address = dto.FullAddress |> Address
+        Phone = dto.Phone |> Phone
+        Email = dto.Email |> Email
+        Photo = 
+            dto.Photo 
+            |> Option.defaultWith (fun () -> randomPlaceholderPhotoPath >> runIO <| ())
+            |> PhotoPath
     }

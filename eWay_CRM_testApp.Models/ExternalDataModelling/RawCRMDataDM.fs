@@ -49,88 +49,61 @@ type Contact =
     { 
         FirstName: string
         LastName: string
-        FullName: string  
+        FullName: string
         Email: string
         Phone: string
         Street: string
         City: string
         State: string
         PostalCode: string
-        FullAddress: string  
-        ProfilePicture: string option  
+        FullAddress: string
+        ProfilePicture: string option  // This is now a FILE PATH, not base64
     }
-
 // Transformation Layer 
 //*********************************************
 module ContactTransform =
+
+    open ImageHelper  
     
     let internal toDomain (dto: ContactDto) : Contact =
-
         let firstName = dto.FirstName |> Option.defaultValue String.Empty
         let lastName = dto.LastName |> Option.defaultValue String.Empty
+        let email = dto.Email1Address |> Option.defaultValue String.Empty
         let street = dto.BusinessAddressStreet |> Option.defaultValue String.Empty
         let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
         let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
         let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
         
+        // Compute full name
         let fullName = 
             match firstName.Trim(), lastName.Trim() with
-            | "", ""      -> "N/A"
-            | first, ""   -> first
-            | "", last    -> last
+            | "", "" -> "N/A"
+            | first, "" -> first
+            | "", last -> last
             | first, last -> sprintf "%s %s" first last
         
+        // Compute full address
         let fullAddress =
             [street; city; state; postalCode]
             |> List.filter (fun s -> not (String.IsNullOrWhiteSpace(s)))
             |> String.concat ", "
-            |> fun addr -> addr |> Option.ofNullEmptySpace |> Option.defaultValue "N/A"
+            |> fun addr -> if String.IsNullOrWhiteSpace(addr) then "N/A" else addr
+        
+        // Convert base64 picture to file path
+        let photoPath =
+            dto.ProfilePicture
+            |> Option.bind (fun base64 -> saveBase64ImageToFile base64 email)
         
         { 
             FirstName = firstName
             LastName = lastName
             FullName = fullName
-            Email = dto.Email1Address |> Option.defaultValue String.Empty
+            Email = email
             Phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty
             Street = street
             City = city
             State = state
             PostalCode = postalCode
             FullAddress = fullAddress
-            ProfilePicture = dto.ProfilePicture
+            ProfilePicture = photoPath  // Now it's a file path option
         }
-    
-    let internal toJson (contacts: Contact list) : string =
-        Encode.toString 2
-            (
-                Encode.object 
-                    [
-                        "Data",
-                        Encode.list
-                            (
-                                contacts 
-                                |> List.map 
-                                    (fun c ->
-                                        Encode.object 
-                                            [
-                                                "FirstName", Encode.string c.FirstName
-                                                "LastName", Encode.string c.LastName
-                                                "FullName", Encode.string c.FullName
-                                                "Email", Encode.string c.Email
-                                                "Phone", Encode.string c.Phone
-                                                "Street", Encode.string c.Street
-                                                "City", Encode.string c.City
-                                                "State", Encode.string c.State
-                                                "PostalCode", Encode.string c.PostalCode
-                                                "FullAddress", Encode.string c.FullAddress
-                                                "ProfilePicture", 
-                                                    match c.ProfilePicture with
-                                                    | Some pic 
-                                                        -> Encode.string pic
-                                                    | None
-                                                        -> Encode.nil
-                                            ]
-                                    )
-                            )
-                    ]
-            )
