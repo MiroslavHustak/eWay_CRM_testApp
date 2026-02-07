@@ -1,5 +1,10 @@
 Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace.
 
+****************************************************************************
+UPDATE 07-02-2026
+Vzhledem k tomu, že jsem s kódem spěchal kvůli jiným aktivitám, ale onemocněl jsem a do termínu 09-02-2026 zbývá nějaký čas, budu postupně leccos do kódu přidávat. Vždy ale na GitHubu bude k dispozici funkční verze. Placeholders1 a 2 v jpg přidejte do ......\eWay_CRM_testApp\eWay_CRM_testApp\bin\Release\net9.0-windows\Photos\ 
+****************************************************************************
+
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
 
 Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání jen na .NET, v podstatě většinou UX/UI/FE s něco málo BE, i když všude [píši](https://www.linkedin.com/in/miroslav-hustak/), že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
