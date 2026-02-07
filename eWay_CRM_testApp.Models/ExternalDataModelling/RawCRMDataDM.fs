@@ -3,6 +3,8 @@
 open System
 open Thoth.Json.Net
 
+open IO_MonadSimulation
+
 //=============================================================================
 // Raw eWay CRM <-> My app contact data 
 //=============================================================================
@@ -19,7 +21,7 @@ type ContactDto =
         BusinessAddressCity: string option
         BusinessAddressState: string option
         BusinessAddressPostalCode: string option
-        ProfilePicture: string option  // Base64 image data
+        ProfilePicture: string option  
         ProfilePictureWidth: int option
         ProfilePictureHeight: int option
     }
@@ -57,8 +59,9 @@ type Contact =
         State: string
         PostalCode: string
         FullAddress: string
-        ProfilePicture: string option  // This is now a FILE PATH, not base64
+        ProfilePicture: string option 
     }
+
 // Transformation Layer 
 //*********************************************
 module ContactTransform =
@@ -74,15 +77,20 @@ module ContactTransform =
         let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
         let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
         
-        // Compute full name
         let fullName = 
             match firstName.Trim(), lastName.Trim() with
-            | "", "" -> "N/A"
-            | first, "" -> first
-            | "", last -> last
-            | first, last -> sprintf "%s %s" first last
+            | s1, s2 
+                when s1 = String.Empty && s2 = String.Empty
+                -> "N/A"
+            | first, s 
+                when s = String.Empty
+                -> first
+            | s, last 
+                when s = String.Empty
+                 -> last               
+            | first, last
+                -> sprintf "%s %s" first last
         
-        // Compute full address
         let fullAddress =
             [street; city; state; postalCode]
             |> List.filter (fun s -> not (String.IsNullOrWhiteSpace(s)))
@@ -92,7 +100,7 @@ module ContactTransform =
         // Convert base64 picture to file path
         let photoPath =
             dto.ProfilePicture
-            |> Option.bind (fun base64 -> saveBase64ImageToFile base64 email)
+            |> Option.bind (fun base64 -> runIO <| saveBase64ImageToFile base64 email)
         
         { 
             FirstName = firstName
@@ -105,5 +113,5 @@ module ContactTransform =
             State = state
             PostalCode = postalCode
             FullAddress = fullAddress
-            ProfilePicture = photoPath  // Now it's a file path option
+            ProfilePicture = photoPath  // file path option
         }

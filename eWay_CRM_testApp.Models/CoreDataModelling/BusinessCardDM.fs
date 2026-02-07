@@ -1,4 +1,5 @@
 ﻿module CoreDataModelling
+
 open Types
 open Helpers
 open IO_MonadSimulation
@@ -49,7 +50,7 @@ let internal businessCardDefault =
         Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
     }
 
-// Transformation Layer (Direct, no JSON)
+// Transformation Layer (I know, not actually necessary now, but may come in handy in the future)
 //*********************************************
 let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
     {
@@ -66,10 +67,9 @@ let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
         Photo = contact.ProfilePicture
     }
 
-let private orDefault def = Option.defaultValue def
-
 let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessCard =
-    let dto = toDto contact  // Transform to DTO first
+
+    let dto = toDto contact 
     
     { 
         Name = dto.FullName |> Name
