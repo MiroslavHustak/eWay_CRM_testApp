@@ -8,8 +8,10 @@ open IO_MonadSimulation
 
 //*****************************************************************************
  
-let private establishConnection() = new Connection(SERVICE_URL, USERNAME, Connection.HashPassword(PASSWORD), APP_ID)
-
+let private establishConnection() = 
+    //new Connection(SERVICE_URL, USERNAME, Connection.HashPassword(PASSWORD), APP_ID)
+    new Connection(SERVICE_URL, USERNAME, PASSWORD_HASH, APP_ID) //to the same effect`
+    
 //*****************************************************************************
 
 let internal withConnection (f: Connection -> 'a option) =  
