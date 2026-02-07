@@ -14,10 +14,10 @@ Z výše uvedených důvodů je zbytečné hodnotit můj kód v XAML a grafickou
 Z formálního hlediska aplikace splňuje zadání (C# plus .NET technologie dle vlastní úvahy), neb C# tam je, ale jen pro okrajové interoperatibilní záležitosti, navíc většinou generovaný danou technologií (moje jsou tam snad jen 2-3 řádky) či psaný někým jiným.
 
 Hlavní .NET technologie dle mé úvahy :-) použité v aplikaci:
-* Elmish.WPF (MVU)
+* Elmish.WPF (MVU) https://github.com/elmish/Elmish.WPF
 * XAML
-* F#
-* Thoth.Json.Net
+* F# https://github.com/MiroslavHustak/FAQ
+* Thoth.Json.Net https://thoth-org.github.io/Thoth.Json/
 
 CE builders, Option/Result extentions jsou mé vlastní "knihovny", takže je vkládám do VS solutions tak, jak jsou, bez ohledu na to, kolik se toho nakonec využije.
 
