@@ -5,9 +5,9 @@ https://www.uschovna.cz/zasilka/UK4XPJX8NRLUN3UN-29A/
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
 
-Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání na C#, v podstatě většinou UX/UI/FE s něco málo BE, i když všude píši, že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
+Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání jen na .NET, v podstatě většinou UX/UI/FE s něco málo BE, i když všude [píši](https://www.linkedin.com/in/miroslav-hustak/), že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
 
-Tož jsem sice dané zadání zpracoval, ale pokud byste mi ještě poslali zadání pro SQL, příp. i s ADO.NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB), budu rád.
+Tož jsem sice dané zadání zpracoval, ale pokud byste mi ještě poslali zadání pro SQL, příp. i s ADO.NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB, kde dá demonstrovat práce s type providers), budu rád.
 
 Z výše uvedených důvodů je zbytečné hodnotit můj kód v XAML a grafickou úroveň aplikace, vypadá jak vypadá. Prosím zaměřte se hlavně na BE a přechod FE/BE.
 
