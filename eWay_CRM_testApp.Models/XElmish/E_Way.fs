@@ -9,11 +9,9 @@ open FsToolkit.ErrorHandling
 
 open Types
 open Helpers
-open Settings
 open CEBuilders
 open ErrorTypes
 open BusinessLogic
-open Serialization
 open ErrorHandling
 open CoreDataModelling
 open IO_MonadSimulation
@@ -204,7 +202,7 @@ module E_Way =
     let internal bindings () : Binding<Model, Msg> list =
         [
             "MessageDisplayText"
-            |> Binding.oneWay (fun m -> m.MessageDisplayText)
+            |> Binding.oneWay (fun m -> formatBusinessCard m.MessageDisplayText)
     
             "PhotoPath"
             |> Binding.oneWay 

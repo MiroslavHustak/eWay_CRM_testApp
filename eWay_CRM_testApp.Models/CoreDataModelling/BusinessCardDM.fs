@@ -1,9 +1,12 @@
 ﻿module CoreDataModelling
 
+open System
+
 open Types
 open Helpers
 open IO_MonadSimulation
 open ExternalDataModelling 
+
 
 //=============================================================================
 // eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data)
@@ -49,7 +52,7 @@ let internal businessCardDefault =
         Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
     }
 
-// Transformation Layer (I know, not actually necessary now, but may come in handy in the future)
+// Transformation Layer 
 //*********************************************
 let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
     {
@@ -82,3 +85,13 @@ let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessC
             |> Option.defaultWith (fun () -> randomPlaceholderPhotoPath >> runIO <| ())
             |> PhotoPath
     }
+
+let internal formatBusinessCard (bc: BusinessCard) : string =
+    [
+        sprintf "Jméno: %s" (let (Name n) = bc.Name in n)
+        sprintf "Společnost: %s" (let (CompanyName c) = bc.CompanyName in c)
+        sprintf "Adresa: %s" (let (Address a) = bc.Address in a)
+        sprintf "Telefon: %s" (let (Phone p) = bc.Phone in p)
+        sprintf "Email: %s" (let (Email e) = bc.Email in e)
+    ]
+    |> String.concat Environment.NewLine
