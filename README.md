@@ -5,7 +5,7 @@ UPDATE 08-02-2026
 
 Vzhledem k tomu, že jsem s kódem spěchal kvůli jiným aktivitám, ale onemocněl jsem a do termínu 09-02-2026 zbývá nějaký čas, leccos jsem do kódu přidal od doby jeho prvního umístění do repo. Placeholders1 a 2 v jpg přidejte do ......\eWay_CRM_testApp\eWay_CRM_testApp\bin\Release\net9.0-windows\Photos\ 
 
-Anebo stáhněte kompletní VS solution zde: https://www.uschovna.cz/zasilka/ULGGYDGJ3EPAXYEX-CY5/
+Anebo stáhněte kompletní VS solution zde: https://www.uschovna.cz/zasilka/ULGGYDGJ3EPAXYEX-8R5
 ****************************************************************************
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
