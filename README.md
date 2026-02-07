@@ -1,8 +1,5 @@
 Zdravím Romana a Štěpána a jakéhokoliv dalšího hodnotitele dané aplikace.
 
-Adresář se simulovanými fotografiemi kontaktů je v binu, takže jej na GitHubu nenaleznete, ale kompletní VS solution je možno stáhnout zde:
-
-
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
 
 Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání jen na .NET, v podstatě většinou UX/UI/FE s něco málo BE, i když všude [píši](https://www.linkedin.com/in/miroslav-hustak/), že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
