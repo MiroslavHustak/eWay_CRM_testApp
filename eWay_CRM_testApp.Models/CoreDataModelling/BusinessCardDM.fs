@@ -7,7 +7,6 @@ open Helpers
 open IO_MonadSimulation
 open ExternalDataModelling 
 
-
 //=============================================================================
 // eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data)
 //=============================================================================

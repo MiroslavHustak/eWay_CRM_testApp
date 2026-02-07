@@ -33,15 +33,15 @@ let private searchContactsByEmail (email: string) =
                     
                     let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
                     
-                    //(*
+                    (*
                     System.Diagnostics.Debug.WriteLine("=== FULL RESPONSE ===")
                     System.Diagnostics.Debug.WriteLine(response.ToString())
                     System.Diagnostics.Debug.WriteLine("=== END RESPONSE ===")
-                    //*)
+                    *)
                     
                     let! data = response.["Data"] |> Option.ofNull
                     
-                    //(*
+                    (*
                     System.Diagnostics.Debug.WriteLine("=== DATA ARRAY ===")
                     System.Diagnostics.Debug.WriteLine(data.ToString())
                   
@@ -64,7 +64,7 @@ let private searchContactsByEmail (email: string) =
                                 
                                 System.Diagnostics.Debug.WriteLine("=== END FIELDS ===")
                             )
-                    //*)
+                    *)
 
                     let! dataStr = data.ToString() |> Option.ofNull
                     let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
