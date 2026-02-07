@@ -21,6 +21,7 @@
     <Compile Include="Helpers\ImageHelper.fs" />
     <Compile Include="Serialization\Serialization.fs" />
     <Compile Include="ExternalDataModelling\RawCRMDataDM.fs" />
+    <Compile Include="EmailHistoryModelling\EmailHistoryModelling.fs" />
     <Compile Include="CoreDataModelling\BusinessCardDM.fs" />
     <Compile Include="BusinessLogic\BusinessCard.fs" />
     <Compile Include="XElmish\E_Way.fs" />

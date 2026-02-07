@@ -17,6 +17,7 @@ open Serialization
 open ErrorHandling
 open CoreDataModelling
 open IO_MonadSimulation
+open EmailHistoryModelling
 
 //***************************************************************
 
@@ -49,13 +50,13 @@ module E_Way =
 
     let internal loadEmailsCmd () =
         Cmd.OfAsync.perform
-            (fun () -> deserializeWithThothAsync >> runIO <| pathToJson)
+            (fun () -> fromDto >> runIO <| ())
             ()
             EmailsLoaded  
 
     let internal saveEmailsCmd newEmails =
         Cmd.OfAsync.perform
-            (fun () -> runIO <| serializeWithThothAsync newEmails pathToJson)
+            (fun () -> toDto >> runIO <| newEmails)
             ()
             EmailsSaved
     

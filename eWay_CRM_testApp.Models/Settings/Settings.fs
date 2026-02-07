@@ -9,3 +9,4 @@ let [<Literal>] internal APP_ID = "ExampleApplication100"
 let [<Literal>] internal pathToJson = "emails.json"
 let [<Literal>] internal pathToCRM_Photos = "eWayCRM_Photos"
 let [<Literal>] internal pathTooLongLimit = 200 // to avoid "PathTooLong" issues (max. 260 characters) 
+let [<Literal>] internal maxListBoxItems = 10
