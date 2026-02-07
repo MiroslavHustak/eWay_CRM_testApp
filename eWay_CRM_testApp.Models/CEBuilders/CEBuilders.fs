@@ -51,18 +51,18 @@ let internal pyramidOfInferno = MyBuilder3
 //**************************************************************************************
 
 type internal MyBuilder5 = MyBuilder5 with   // This CE is a monad-style control-flow helper, not a lawful monad
-        member _.Recover(m : bool * 'a, nextFunc : unit -> 'a) : 'a =
-            match m with
-            | (false, value)
-                -> value
-            | (true, _)
-                -> nextFunc() 
-        member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion              
-        member _.Return x : 'a = x   
-        member _.ReturnFrom x : 'a = x 
-        member _.Using(x : 'a, _body: 'a -> 'b) : 'b = _body x    
-        member _.Delay(f : unit -> 'a) = f()
-        member _.Zero() = ()    
+    member _.Recover(m : bool * 'a, nextFunc : unit -> 'a) : 'a =
+        match m with
+        | (false, value)
+            -> value
+        | (true, _)
+            -> nextFunc() 
+    member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion              
+    member _.Return x : 'a = x   
+    member _.ReturnFrom x : 'a = x 
+    member _.Using(x : 'a, _body: 'a -> 'b) : 'b = _body x    
+    member _.Delay(f : unit -> 'a) = f()
+    member _.Zero() = ()    
 
 let internal pyramidOfDamnation = MyBuilder5
 
