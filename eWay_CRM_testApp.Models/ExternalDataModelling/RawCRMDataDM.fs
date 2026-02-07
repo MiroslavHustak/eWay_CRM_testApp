@@ -49,7 +49,7 @@ type Contact =
 
 module ContactTransform =
     
-    let internal  toDomain (dto: ContactDto) : Contact =
+    let internal toDomain (dto: ContactDto) : Contact =
         { 
             Name2 = dto.Name2 |> Option.defaultValue String.Empty
             Email = dto.Email1Address |> Option.defaultValue String.Empty

@@ -10,7 +10,7 @@ open IO_MonadSimulation
 
 //********************************************************
 
-let internal safeFullPathResult path =
+let private safeFullPathResult path =
 
     IO (fun () ->   
         try
@@ -41,7 +41,6 @@ let internal serializeWithThothAsync (emails: string list) (path : string) =
         | _ -> async { return Error SerializationError }
     )
 
-
 let internal deserializeWithThothAsync (path: string) =
 
     IO (fun () ->   
@@ -51,7 +50,8 @@ let internal deserializeWithThothAsync (path: string) =
                     let! fullPath = safeFullPathResult >> runIO <| path
         
                     // TODO: Verify TOCTOU effect
-                    do! File.Exists fullPath 
+                    do! 
+                        File.Exists fullPath 
                         |> Result.fromBool fullPath FileNotExisting
                         |> Result.ignore<string, Errors>
         

@@ -61,14 +61,14 @@ module MainWindowNonOpt =
             SelectedTabHeader: string
         }
                
-    let private tbNone = newGuid ()
+    //let private tbNone = newGuid ()
     let private tbE_Way = newGuid ()
     //let private tbLicences = newGuid ()  
     
     let private tabs =
         let tab header toolButtons =
             { Id = newGuid (); Header = header; Toolbuttons = toolButtons }           
-        [ tab header1 []]
+        [tab header1 []]
         
     let internal e_WayPage, (e_WayPageCmd: Cmd<E_Way.Msg>) = E_Way.init ()
         

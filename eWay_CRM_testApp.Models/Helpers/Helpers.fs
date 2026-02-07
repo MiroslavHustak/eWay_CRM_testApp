@@ -9,10 +9,12 @@ open IO_MonadSimulation
 let private emailRegex =
     IO (fun () ->   
         try
-            Regex(
-                @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3}$",
-                RegexOptions.IgnoreCase ||| RegexOptions.Compiled
-            ) |> Option.ofNull
+            Regex
+                (
+                    @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3}$",
+                        RegexOptions.IgnoreCase ||| RegexOptions.Compiled
+                )
+            |> Option.ofNull
         with
         | _ -> None
     )
@@ -32,6 +34,10 @@ let internal isValidEmail (email: string) =
 let internal randomPlaceholderPhotoPath () = 
     IO (fun () ->
         let placeholders = [| "placeholder1.jpg"; "placeholder2.jpg" |]
-        let random = System.Random()
-        placeholders.[random.Next(placeholders.Length)]
+        let random = System.Random()        
+        placeholders 
+        |> Array.item
+            (
+                random.Next (placeholders |> Array.length)
+            )
     )

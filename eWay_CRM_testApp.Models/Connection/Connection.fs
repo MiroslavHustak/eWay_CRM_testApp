@@ -15,6 +15,8 @@ let private establishConnection() = new Connection(SERVICE_URL, USERNAME, Connec
 let internal withConnection (f: Connection -> 'a option) =  
 
     IO (fun () ->
+        
+        //[<TailCall>] tested at the module level, no warnings
         let rec tryWithRetry attemptsLeft =
             try
                 let conn = establishConnection()
@@ -42,7 +44,8 @@ let internal withConnection (f: Connection -> 'a option) =
 
 let private connectionInstance = IO (fun () -> lazy (establishConnection()))  //Not used yet
 
-let internal withConnection2 (f: Connection -> 'a option) =
+let internal withConnection2 (f: Connection -> 'a option) = //Not used yet
+
     IO (fun () ->
         try
             f (runIO connectionInstance).Value
@@ -51,6 +54,7 @@ let internal withConnection2 (f: Connection -> 'a option) =
     )
 
 let internal cleanup() =  //Not used yet
+
     IO (fun () ->
         match (runIO connectionInstance).IsValueCreated with
         | false 
