@@ -1,7 +1,5 @@
 ﻿module CoreDataModelling
-
 open Thoth.Json.Net
-
 open Types
 open Helpers
 open IO_MonadSimulation
@@ -10,9 +8,8 @@ open IO_MonadSimulation
 // eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data )
 //=============================================================================
 
- // DTO
+// DTO
 //*********************************************
-
 type internal ContactDto =
     {
         Name: string option
@@ -26,7 +23,6 @@ type internal ContactDto =
 
 // Domain Model
 //*********************************************
-
 type internal BusinessCard =
     {
         Name: Name
@@ -51,18 +47,16 @@ let internal businessCardDefault =
 
 // Transformation Layer 
 //*********************************************
-
 let private contactDecoder : Decoder<ContactDto> =
     Decode.object
-        (fun get
-            ->
+        (fun get ->
             {
-                Name = get.Optional.Field "Name" Decode.string
+                Name = get.Optional.Field "FullName" Decode.string  // Changed from "Name"
                 Email = get.Optional.Field "Email" Decode.string
                 Phone = get.Optional.Field "Phone" Decode.string
                 Company = get.Optional.Field "Company" Decode.string
                 Title = get.Optional.Field "Title" Decode.string
-                Address = get.Optional.Field "Address" Decode.string
+                Address = get.Optional.Field "FullAddress" Decode.string  // Changed from "Address"
                 Photo = get.Optional.Field "Photo" Decode.string 
             }
         )

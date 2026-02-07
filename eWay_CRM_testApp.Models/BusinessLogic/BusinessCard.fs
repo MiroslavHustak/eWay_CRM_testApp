@@ -17,7 +17,7 @@ open ExternalDataModelling
 //***************************************************************
  
 let private searchContactsByEmail (email: string) =
-
+    (*
     withConnection
         (fun (conn: Connection)
             -> 
@@ -33,6 +33,63 @@ let private searchContactsByEmail (email: string) =
 
                     let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
                     let! data = response.["Data"] |> Option.ofNull
+                    let! dataStr = data.ToString() |> Option.ofNull
+                    let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
+            
+                    return 
+                        dtos
+                        |> List.map ContactTransform.toDomain
+                        |> ContactTransform.toJson
+                }
+        )
+        *)
+     withConnection
+        (fun (conn: Connection)
+            -> 
+            option
+                {
+                    let! email = isValidEmail >> runIO <| email
+                    let transmitObject = JObject()
+                    transmitObject.Add("Email1Address", JValue email)
+
+                    let request = JObject()
+                    request.Add("transmitObject", transmitObject)
+                    request.Add("includeProfilePictures", JValue true)
+                    
+                    let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
+                    
+                    (*
+                    System.Diagnostics.Debug.WriteLine("=== FULL RESPONSE ===")
+                    System.Diagnostics.Debug.WriteLine(response.ToString())
+                    System.Diagnostics.Debug.WriteLine("=== END RESPONSE ===")
+                    *)
+                    
+                    let! data = response.["Data"] |> Option.ofNull
+                    
+                    (*
+                    System.Diagnostics.Debug.WriteLine("=== DATA ARRAY ===")
+                    System.Diagnostics.Debug.WriteLine(data.ToString())
+                    *)
+                    (*
+                    let!_ = 
+                        data.HasValues 
+                        |> Option.fromBool
+                            ( 
+                               
+                                let firstContact = data.First :?> JObject
+                                System.Diagnostics.Debug.WriteLine("=== AVAILABLE FIELDS ===")
+                                
+                                firstContact.Properties()
+                                |> Seq.iter (fun prop ->
+                                    let valuePreview = 
+                                        let v = prop.Value.ToString()
+                                        match v.Length > 100 with true -> v.Substring(0, 100) + "..." | false -> v
+                                    System.Diagnostics.Debug.WriteLine(sprintf "Field: %s = %s" prop.Name valuePreview)
+                                )
+                                
+                                System.Diagnostics.Debug.WriteLine("=== END FIELDS ===")
+                            )
+                    *)
                     let! dataStr = data.ToString() |> Option.ofNull
                     let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
             
