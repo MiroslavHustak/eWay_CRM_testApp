@@ -2,6 +2,7 @@
 
 type [<Struct>] Errors =
     | FileNotExisting
+    | ImageFileNotExisting //not used yet
     | SerializationError 
     | DeserializationError 
     | CRMError 

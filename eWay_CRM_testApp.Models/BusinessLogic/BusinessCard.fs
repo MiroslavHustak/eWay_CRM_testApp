@@ -65,6 +65,7 @@ let private searchContactsByEmail (email: string) =
                                 System.Diagnostics.Debug.WriteLine("=== END FIELDS ===")
                             )
                     *)
+
                     let! dataStr = data.ToString() |> Option.ofNull
                     let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
             

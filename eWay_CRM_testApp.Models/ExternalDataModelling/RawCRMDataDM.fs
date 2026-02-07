@@ -69,6 +69,7 @@ module ContactTransform =
     open ImageHelper  
     
     let internal toDomain (dto: ContactDto) : Contact =
+
         let firstName = dto.FirstName |> Option.defaultValue String.Empty
         let lastName = dto.LastName |> Option.defaultValue String.Empty
         let email = dto.Email1Address |> Option.defaultValue String.Empty
@@ -76,6 +77,7 @@ module ContactTransform =
         let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
         let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
         let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
+        let phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty
         
         let fullName = 
             match firstName.Trim(), lastName.Trim() with
@@ -89,15 +91,14 @@ module ContactTransform =
                 when s = String.Empty
                  -> last               
             | first, last
-                -> sprintf "%s %s" first last
-        
+                -> sprintf "%s %s" first last        
+       
         let fullAddress =
-            [street; city; state; postalCode]
-            |> List.filter (fun s -> not (String.IsNullOrWhiteSpace(s)))
+            [ street; city; state; postalCode ]
+            |> List.choose Option.ofNullEmptySpace
             |> String.concat ", "
-            |> fun addr -> if String.IsNullOrWhiteSpace(addr) then "N/A" else addr
+            |> function s when s = String.Empty -> "N/A" | s -> s
         
-        // Convert base64 picture to file path
         let photoPath =
             dto.ProfilePicture
             |> Option.bind (fun base64 -> runIO <| saveBase64ImageToFile base64 email)
@@ -107,7 +108,7 @@ module ContactTransform =
             LastName = lastName
             FullName = fullName
             Email = email
-            Phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty
+            Phone = phone
             Street = street
             City = city
             State = state
