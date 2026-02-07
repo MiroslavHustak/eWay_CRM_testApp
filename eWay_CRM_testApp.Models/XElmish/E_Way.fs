@@ -23,11 +23,11 @@ module E_Way =
 
     type internal Model =
         { 
-              MessageDisplayText: BusinessCard
-              EmailInputString: string
-              EmailAddresses: string list
-              SelectedEmail: string option
-              ErrorMessage: string option
+            MessageDisplayText: BusinessCard
+            EmailInputString: string
+            EmailAddresses: string list
+            SelectedEmail: string option
+            ErrorMessage: string option
         }  
 
     type Msg =
