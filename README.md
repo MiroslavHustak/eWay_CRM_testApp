@@ -41,7 +41,7 @@ Používal jsem copilota?
 
 Sice ano, ale kód v aplikaci je většinou můj vlastní "pre-LLM" kód recyklovaný z těchto aplikací:
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI
-https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator
+[https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator](https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator/tree/master/Unique_Identifier_And_Metadata_File_Creator.Models/XElmish)
 
 Code review
 
