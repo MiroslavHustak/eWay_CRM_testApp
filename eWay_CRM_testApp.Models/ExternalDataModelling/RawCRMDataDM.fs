@@ -21,6 +21,7 @@ type ContactDto =
         BusinessAddressCity: string option
         BusinessAddressState: string option
         BusinessAddressPostalCode: string option
+        Company: string option
         ProfilePicture: string option  
         ProfilePictureWidth: int option
         ProfilePictureHeight: int option
@@ -33,6 +34,7 @@ let contactDtoDecoder : Decoder<ContactDto> =
             { 
                 FirstName = get.Optional.Field "FirstName" Decode.string
                 LastName = get.Optional.Field "LastName" Decode.string
+                Company = get.Optional.Field "Company" Decode.string
                 Email1Address = get.Optional.Field "Email1Address" Decode.string
                 TelephoneNumber1 = get.Optional.Field "TelephoneNumber1" Decode.string
                 BusinessAddressStreet = get.Optional.Field "BusinessAddressStreet" Decode.string
@@ -52,6 +54,7 @@ type Contact =
         FirstName: string
         LastName: string
         FullName: string
+        Company: string
         Email: string
         Phone: string
         Street: string
@@ -73,6 +76,7 @@ module ContactTransform =
         let firstName = dto.FirstName |> Option.defaultValue String.Empty
         let lastName = dto.LastName |> Option.defaultValue String.Empty
         let email = dto.Email1Address |> Option.defaultValue String.Empty
+        let company = dto.Company |> Option.defaultValue String.Empty
         let street = dto.BusinessAddressStreet |> Option.defaultValue String.Empty
         let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
         let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
@@ -107,6 +111,7 @@ module ContactTransform =
             FirstName = firstName
             LastName = lastName
             FullName = fullName
+            Company = company
             Email = email
             Phone = phone
             Street = street

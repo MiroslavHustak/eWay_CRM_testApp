@@ -16,6 +16,7 @@ type internal ContactDto =
         FirstName: string
         LastName: string
         FullName: string
+        Company: string
         Email: string
         Phone: string
         Street: string
@@ -31,7 +32,6 @@ type internal ContactDto =
 type internal BusinessCard =
     {
         Name: Name
-        Position: Position
         CompanyName: CompanyName
         Address: Address
         Phone: Phone
@@ -42,7 +42,6 @@ type internal BusinessCard =
 let internal businessCardDefault =
     { 
         Name = Name "N/A"
-        Position = Position "N/A"
         CompanyName = CompanyName "N/A"
         Address = Address "N/A"
         Phone = Phone "N/A"
@@ -57,6 +56,7 @@ let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
         FirstName = contact.FirstName
         LastName = contact.LastName
         FullName = contact.FullName
+        Company = contact.Company
         Email = contact.Email
         Phone = contact.Phone
         Street = contact.Street
@@ -73,8 +73,7 @@ let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessC
     
     { 
         Name = dto.FullName |> Name
-        Position = Position "N/A"
-        CompanyName = CompanyName "N/A"
+        CompanyName = dto.Company |> CompanyName
         Address = dto.FullAddress |> Address
         Phone = dto.Phone |> Phone
         Email = dto.Email |> Email
