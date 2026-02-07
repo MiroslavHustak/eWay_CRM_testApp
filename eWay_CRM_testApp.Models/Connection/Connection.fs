@@ -40,8 +40,8 @@ let internal withConnection (f: Connection -> 'a option) =
     )
 //****************************************************************************
 
-//Trvalé připojení zatím neřešeno, neb bych musel přidávat connectivity listener, kontrolky a zabývat se opět UX/UI/FE.
-//Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
+//A connectivity listener not added here yet as this would mean dabble with UI/UX and controls in XAML again.
+//You may look how I dealt with connectivity listening in the past here:
 //https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Connectivity/Connectivity.fs
 
 let private connectionInstance = IO (fun () -> lazy (establishConnection()))  //Not used yet
