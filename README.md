@@ -12,7 +12,7 @@ Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API),
 
 Ač jsem projevil zájem o spolupráci v SQL (inzerát Integrační specialista (SQL + jakýkoliv programovací jazyk)), kupodivu mi došlo testovací zadání jen na .NET, v podstatě většinou UX/UI/FE s něco málo BE, i když všude [píši](https://www.linkedin.com/in/miroslav-hustak/), že na UI/UX nemám talent a FE dělám jen z donucení, neb jsem backender. 
 
-Tož jsem sice dané zadání zpracoval (počet zobrazených hledaných emailových adres v listboxu je omezen na 10), ale pokud byste mi ještě poslali zadání pro SQL, příp. i s ADO.NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB, kde dá demonstrovat práce s type providers), budu rád.
+Tož jsem sice dané zadání zpracoval, ale pokud byste mi ještě poslali zadání pro SQL, příp. i s ADO.NET (např. jestli nepotřebujete přehodit něco z XML, JSONu či Excelu do DB, kde dá demonstrovat práce s type providers), budu rád.
 
 Z výše uvedených důvodů je zbytečné hodnotit můj kód v XAML a grafickou úroveň aplikace, vypadá jak vypadá, jsem si toho vědom :-). Prosím zaměřte se hlavně na BE a přechod FE/BE.
 
@@ -31,6 +31,7 @@ Rutinní kód jsem do aplikace z časových důvodů nedával. To jest v aplikac
 * podrobné členění exceptions (svůj error handling jsem tady velmi zjednodušil)
 * connectivity listener, řešení blokace kontrolek / cancellation v případě přerušení připojení k CRM
 * testování - tady by v úvahu připadalo snad jen PBT, i když vzhledem k tomu, že používám reflection-free Thot.Json.Net, problémy by neměly být (stress testing jsem samozřejmě provedl)
+* řešení pořadí v seznamu posledně vyhledávaných adres (seznam je omezen na 10 adres bez ohledu na datum vyhledávání)
 
 Pokud potřebujete vidět, jak jsem to kdysi řešil, kód naleznete např. tady:
 
