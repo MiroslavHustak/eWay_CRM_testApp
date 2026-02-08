@@ -48,7 +48,7 @@ module E_Way =
 
     let internal loadEmailsCmd () =
         Cmd.OfAsync.perform
-            (fun () -> fromDto >> runIO <| ())
+            (fromDto >> runIO)
             ()
             EmailsLoaded  
 

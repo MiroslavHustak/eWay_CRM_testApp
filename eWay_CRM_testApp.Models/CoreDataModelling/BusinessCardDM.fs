@@ -81,7 +81,7 @@ let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessC
         Email = dto.Email |> Email
         Photo = 
             dto.Photo 
-            |> Option.defaultWith (fun () -> randomPlaceholderPhotoPath >> runIO <| ())
+            |> Option.defaultWith (randomPlaceholderPhotoPath >> runIO)
             |> PhotoPath
     }
 
