@@ -48,15 +48,15 @@ module E_Way =
 
     let internal loadEmailsCmd () =
         Cmd.OfAsync.perform
-            (fromDto >> runIO)
-            ()
-            EmailsLoaded  
+            <| (fromDto >> runIO)
+            <| ()
+            <| EmailsLoaded  
 
     let internal saveEmailsCmd newEmails =
         Cmd.OfAsync.perform
-            (fun () -> toDto >> runIO <| newEmails)
-            ()
-            EmailsSaved
+            <| (fun () -> toDto >> runIO <| newEmails)
+            <| ()
+            <| EmailsSaved
     
     let internal init () : Model * Cmd<Msg> =
 
