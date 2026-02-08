@@ -1,0 +1,1323 @@
+﻿module ImageHelper
+
+open System
+open System.IO
+
+open FsToolkit.ErrorHandling
+
+//********************************************************
+
+open Helpers
+open Settings
+open IO_MonadSimulation
+
+//********************************************************
+
+let internal saveBase64ImageToFile (base64String: string) (email: string) =
+    IO (fun () ->
+        option
+            {
+                let! validBase64 = base64String |> Option.ofNullEmptySpace                
+                let! validEmail = isValidEmail email |> runIO
+                
+                // Decode base64
+                let! imageBytes =
+                    try
+                        let bytes = Convert.FromBase64String <| validBase64.Trim()
+
+                        match bytes.Length with
+                        | 0 -> None
+                        | _ -> Some bytes
+                    with
+                    | _  -> None
+                
+                let! dirInfo =
+                    try
+                        let tempDir = Path.Combine(Path.GetTempPath(), pathToCRM_Photos)
+                        let dir = Directory.CreateDirectory tempDir
+
+                        match dir.Exists with  //TODO: verify TOCTOU effect
+                        | true  -> Some dir
+                        | false -> None
+                    with
+                    | _  -> None
+                
+                let sanitizedEmail = 
+                    validEmail
+                    |> Seq.filter (fun c -> Char.IsLetterOrDigit(c) || c = '@' || c = '.')
+                    |> Seq.toArray
+                    |> String
+                
+                let fileBaseName = 
+                    match sanitizedEmail with
+                    | s when s = String.Empty                        
+                        -> "unknown"
+                    | s -> s
+                
+                let fileName = sprintf "%s_%s.png" fileBaseName (Guid.NewGuid().ToString("N").Substring(0, 8))
+                let filePath = Path.Combine(dirInfo.FullName, fileName)
+                
+                let! finalPath =
+                    try
+                        match filePath.Length with
+                        | len 
+                            when len > pathTooLongLimit 
+                            ->
+                            let shortFileName = sprintf "%s.png" (Guid.NewGuid().ToString("N"))
+                            let shortPath = Path.Combine(dirInfo.FullName, shortFileName)
+                            File.WriteAllBytes(shortPath, imageBytes)
+                            Some shortPath
+                        | _ ->
+                            File.WriteAllBytes(filePath, imageBytes)
+                            Some filePath
+                    with
+                    | _ -> None             
+                                
+                return finalPath
+            }
+    )﻿module IO_MonadSimulation
+    
+type [<Struct>] internal IO<'a> = IO of (unit -> 'a) // wrapping custom type simulating Haskell's IO Monad (without the monad, of course)
+
+let internal runIO (IO action) = action () 
+let internal runIOAsync (IO action) : Async<'a> = async { return action () }﻿(*
+MIT License for software design in this source file
+    
+Copyright (c) 2021 Bent Tranberg
+    
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+    
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+*)    
+
+namespace eWay_CRM_testApp.Models
+
+open System
+open System.Windows  
+
+open Elmish
+open Elmish.WPF
+
+open CEBuilders
+open eWay_CRM_testApp.Models
+
+//*******************************************
+    
+//Non-option variant
+module MainWindowNonOpt =
+    
+    let private header1 = " Hlavní stránka "    
+    let private newGuid () = Guid.NewGuid()
+            
+    type internal Toolbutton =
+        {
+            Id: Guid
+            Text: string
+            IsMarkable: bool
+        }
+    
+    type internal Tab =
+        {
+            Id: Guid
+            Header: string
+            Toolbuttons: Toolbutton list
+        }
+    
+    type internal Msg =
+        | ButtonClick of id: Guid
+        | ShowE_Way
+        | E_WayMsg of E_Way.Msg
+        | SetSelectedTabHeader of tabHeader:string
+    
+    type internal Model =
+        {
+            Tabs: Tab list
+            MarkedButton: Guid
+            E_WayTestPage: E_Way.Model 
+            SelectedTabHeader: string
+        }
+               
+    //let private tbNone = newGuid ()
+    let private tbE_Way = newGuid ()
+    //let private tbLicences = newGuid ()  
+    
+    let private tabs =
+        let tab header toolButtons =
+            { Id = newGuid (); Header = header; Toolbuttons = toolButtons }           
+        [tab header1 []]
+        
+    let internal e_WayPage, (e_WayPageCmd: Cmd<E_Way.Msg>) = E_Way.init ()
+        
+    let internal startModel =
+        {
+            Tabs = tabs
+            MarkedButton = tbE_Way           
+            E_WayTestPage = e_WayPage               
+            SelectedTabHeader = (tabs |> List.item 0).Header
+        }
+    
+    let internal init () : Model * Cmd<Msg> = startModel, Cmd.map E_WayMsg e_WayPageCmd
+    
+    let internal findButton (id: Guid) (m: Model) =
+        m.Tabs
+        |> List.tryPick 
+            (fun tab 
+                ->
+                tab.Toolbuttons 
+                |> List.tryFind (fun tb -> tb.Id = id)
+            )
+    
+    let internal update (msg: Msg) (m: Model) = 
+        match msg with
+        | ButtonClick id 
+            ->
+            match findButton id m with
+            | None             
+                -> m, Cmd.none
+            | Some clickedButton 
+                ->                                   
+                let m = 
+                    match clickedButton.IsMarkable with
+                    | true  -> { m with MarkedButton = id }
+                    | false -> m                            
+    
+                pyramidOfDamnation    
+                    {         
+                        // Keep the CE as it is, to allow more tbE_Way-like buttons to be added without changing the ROP logic
+                        let! _ = not (clickedButton.Id = tbE_Way), (m, Cmd.ofMsg ShowE_Way) 
+                        return m, Cmd.none 
+                    }       
+    
+        | ShowE_Way 
+            -> { m with E_WayTestPage = fst (E_Way.init()) }, Cmd.none   
+        
+        | E_WayMsg msg
+            ->
+            let m', cmd' = E_Way.update msg m.E_WayTestPage
+            { m with E_WayTestPage = m' }, Cmd.map E_WayMsg cmd'    
+       
+        | SetSelectedTabHeader header 
+            ->           
+            match header with
+            | value 
+                when header1 = header
+                -> { m with MarkedButton = tbE_Way; SelectedTabHeader = value }, Cmd.ofMsg ShowE_Way 
+            | _ -> { m with SelectedTabHeader = header }, Cmd.none
+
+    let internal bindings () : Binding<Model, Msg> list =
+        [            
+            "Tabs"
+            |> Binding.subModelSeq
+                (
+                    (fun m -> m.Tabs),
+                    (fun t -> t.Id),
+                    fun () -> ["Header" |> Binding.oneWay (fun (_, t) -> t.Header)]
+                )    
+
+            "E_WayPage"
+            |> Binding.SubModel.required E_Way.bindings
+            |> Binding.mapModel (fun m -> m.E_WayTestPage)
+            |> Binding.mapMsg E_WayMsg       
+
+            "E_WayPageVisible"
+            |> Binding.oneWay 
+                (fun m -> match m.MarkedButton = tbE_Way with true -> Visibility.Visible | false -> Visibility.Collapsed)               
+    
+            "SelectedTabHeader"
+            |> Binding.twoWay
+                (
+                    (fun m -> m.SelectedTabHeader),
+                    SetSelectedTabHeader
+                )
+        ]
+        
+    let designVm = ViewModel.designInstance startModel (bindings())﻿module Option 
+
+open System
+
+open CEBuilders  
+
+let internal ofBool =                           
+    function   
+    | true  -> Some ()  
+    | false -> None
+
+let internal toBool = 
+    function   
+    | Some _ -> true
+    | None   -> false
+
+let inline internal fromBool value =                               
+    function   
+    | true  -> Some value  
+    | false -> None
+     
+let inline internal ofNull (value: 'nullableValue) =
+    match System.Object.ReferenceEquals(value, null) with 
+    | true  -> None
+    | false -> Some value     
+
+let inline internal ofPtrOrNull (value: 'nullableValue) =  
+    match System.Object.ReferenceEquals(value, null) with 
+    | true  ->
+            None
+    | false -> 
+            match box value with
+            | null 
+                -> None
+            | :? IntPtr as ptr 
+                when ptr = IntPtr.Zero
+                -> None
+            | _   
+                -> Some value          
+    
+let inline internal ofNullEmpty (value: 'nullableValue) : string option = //NullOrEmpty
+    pyramidOfDoom 
+        {
+            let!_ = (not <| System.Object.ReferenceEquals(value, null)) |> fromBool value, None 
+            let value = string value 
+            let! _ = (not <| String.IsNullOrEmpty value) |> fromBool value, None //IsNullOrEmpty is not for nullable types
+
+            return Some value
+        }
+
+let inline internal ofNullEmpty2 (value: 'nullableValue) : string option =
+    option2 
+        {
+            let!_ = (not <| System.Object.ReferenceEquals(value, null)) |> fromBool value                            
+            let value: string = string value
+            let!_ = (not <| String.IsNullOrEmpty value) |> fromBool value
+
+            return Some value
+        }
+
+let inline internal ofNullEmptySpace (value: 'nullableValue) = //NullOrEmpty, NullOrWhiteSpace
+    pyramidOfDoom //nelze option {}
+        {
+            let!_ = (not <| System.Object.ReferenceEquals(value, null)) |> fromBool Some, None 
+            let value = string value 
+            let! _ = (not <| String.IsNullOrWhiteSpace(value)) |> fromBool Some, None
+       
+            return Some value
+        }
+
+let inline internal toResult err = 
+    function   
+    | Some value -> Ok value 
+    | None       -> Error err 
+
+    (*
+    let internal ofNullEmpty2 (value: string) : string option =
+        option 
+            {
+                do! (not <| System.Object.ReferenceEquals(value, null)) |> fromBool value                            
+                let value : string = string value
+                do! (not <| String.IsNullOrEmpty value) |> fromBool value
+
+                return value
+            } 
+    *)
+
+    (*
+    let defaultValue default opt =
+        match opt with
+        | Some value -> value
+        | None       -> default
+        
+    let map f opt =
+        match opt with
+        | Some value -> Some (f value)
+        | None       -> None
+
+    let bind f opt =
+        match opt with
+        | Some value -> f value
+        | None       -> None
+
+    let orElseWith (f: unit -> 'T option) (option: 'T option) : 'T option =
+        match option with
+        | Some x -> Some x
+        | None   -> f()
+           
+    let iter action option =
+        match option with
+        | Some x -> action x
+        | None   -> () 
+    *) 
+﻿module Elmish.Program
+
+open Elmish.WPF
+open eWay_CRM_testApp.Models
+
+let main window = 
+  
+    WpfProgram.mkProgram MainWindowNonOpt.init MainWindowNonOpt.update MainWindowNonOpt.bindings
+    |> WpfProgram.startElmishLoop window﻿module ExternalDataModelling
+
+open System
+open Thoth.Json.Net
+
+open IO_MonadSimulation
+
+//=============================================================================
+// Raw eWay CRM <-> My app contact data 
+//=============================================================================
+
+// DTO
+//*********************************************
+type ContactDto =
+    { 
+        FirstName: string option
+        LastName: string option
+        Email1Address: string option
+        TelephoneNumber1: string option
+        BusinessAddressStreet: string option
+        BusinessAddressCity: string option
+        BusinessAddressState: string option
+        BusinessAddressPostalCode: string option
+        Company: string option
+        ProfilePicture: string option  
+        ProfilePictureWidth: int option
+        ProfilePictureHeight: int option
+    }
+
+let contactDtoDecoder : Decoder<ContactDto> =
+    Decode.object
+        (fun get 
+            ->
+            { 
+                FirstName = get.Optional.Field "FirstName" Decode.string
+                LastName = get.Optional.Field "LastName" Decode.string
+                Company = get.Optional.Field "Company" Decode.string
+                Email1Address = get.Optional.Field "Email1Address" Decode.string
+                TelephoneNumber1 = get.Optional.Field "TelephoneNumber1" Decode.string
+                BusinessAddressStreet = get.Optional.Field "BusinessAddressStreet" Decode.string
+                BusinessAddressCity = get.Optional.Field "BusinessAddressCity" Decode.string
+                BusinessAddressState = get.Optional.Field "BusinessAddressState" Decode.string
+                BusinessAddressPostalCode = get.Optional.Field "BusinessAddressPostalCode" Decode.string
+                ProfilePicture = get.Optional.Field "ProfilePicture" Decode.string
+                ProfilePictureWidth = get.Optional.Field "ProfilePictureWidth" Decode.int
+                ProfilePictureHeight = get.Optional.Field "ProfilePictureHeight" Decode.int
+            }
+        )
+
+// Domain model
+//*********************************************
+type Contact =
+    { 
+        FirstName: string
+        LastName: string
+        FullName: string
+        Company: string
+        Email: string
+        Phone: string
+        Street: string
+        City: string
+        State: string
+        PostalCode: string
+        FullAddress: string
+        ProfilePicture: string option 
+    }
+
+// Transformation Layer 
+//*********************************************
+module ContactTransform =
+
+    open ImageHelper  
+    
+    let internal toDomain (dto: ContactDto) : Contact =
+
+        let firstName = dto.FirstName |> Option.defaultValue String.Empty
+        let lastName = dto.LastName |> Option.defaultValue String.Empty
+        let email = dto.Email1Address |> Option.defaultValue String.Empty
+        let company = dto.Company |> Option.defaultValue String.Empty
+        let street = dto.BusinessAddressStreet |> Option.defaultValue String.Empty
+        let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
+        let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
+        let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
+        let phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty
+        
+        let fullName = 
+            match firstName.Trim(), lastName.Trim() with
+            | s1, s2 
+                when s1 = String.Empty && s2 = String.Empty
+                -> "N/A"
+            | first, s 
+                when s = String.Empty
+                -> first
+            | s, last 
+                when s = String.Empty
+                 -> last               
+            | first, last
+                -> sprintf "%s %s" first last        
+       
+        let fullAddress =
+            [ street; city; state; postalCode ]
+            |> List.choose Option.ofNullEmptySpace
+            |> String.concat ", "
+            |> function s when s = String.Empty -> "N/A" | s -> s
+        
+        let photoPath =
+            dto.ProfilePicture
+            |> Option.bind (fun base64 -> runIO <| saveBase64ImageToFile base64 email)
+        
+        { 
+            FirstName = firstName
+            LastName = lastName
+            FullName = fullName
+            Company = company
+            Email = email
+            Phone = phone
+            Street = street
+            City = city
+            State = state
+            PostalCode = postalCode
+            FullAddress = fullAddress
+            ProfilePicture = photoPath  // file path option
+        }﻿module Result
+
+open System         
+          
+//Applicative functor      
+let inline internal sequence aListOfResults = //gets the first error - see the book Domain Modelling Made Functional
+    let prepend firstR restR =
+        match firstR, restR with
+        | Ok first, Ok rest   -> Ok (first :: rest) | Error err1, Ok _ -> Error err1
+        | Ok _, Error err2    -> Error err2
+        | Error err1, Error _ -> Error err1
+
+    let initialValue = Ok [] 
+    List.foldBack prepend aListOfResults initialValue  
+
+let internal fromOption = 
+    function   
+    | Some value -> Ok value
+    | None       -> Error String.Empty  
+
+let internal toOption = 
+    function   
+    | Ok value -> Some value 
+    | Error _  -> None  
+
+let inline internal fromBool ok err =                               
+    function   
+    | true  -> Ok ok  
+    | false -> Error err
+
+let internal toBool =                               
+    function   
+    | Ok _    -> true  
+    | Error _ -> false
+
+(*
+let defaultWith defaultFn res =
+    match res with
+    | Ok value  -> value
+    | Error err -> defaultFn err 
+        
+let defaultValue default res =
+    match res with
+    | Ok value -> value
+    | Error _  -> default
+        
+let map f res =
+    match res with
+    | Ok value  -> Ok (f value)
+    | Error err -> Error err
+
+let mapError f res =
+    match res with
+    | Ok value  -> Ok value
+    | Error err -> Error (f err)
+
+let bind f res =
+    match res with
+    | Ok value  -> f value
+    | Error err -> Error err
+*)﻿module Serialization
+  
+open System.IO
+
+open Thoth.Json.Net
+open FsToolkit.ErrorHandling
+
+open ErrorTypes
+open IO_MonadSimulation
+
+//********************************************************
+
+let private safeFullPathResult path =
+
+    IO (fun () ->   
+        try
+            Path.GetFullPath path
+            |> Option.ofNullEmpty 
+            |> Option.toResult FileNotExisting  
+        with
+        | _ -> Error FileNotExisting
+    )
+      
+let internal serializeWithThothAsync (emails: string list) (path : string) =
+
+    IO (fun () ->   
+        try   
+            let json: string =
+                emails
+                |> List.map Encode.string
+                |> Encode.list
+                |> Encode.toString 4
+
+            asyncResult 
+                {
+                    let! path = safeFullPathResult >> runIO <| path                                
+                    use writer = new StreamWriter(path, append = false)
+                    return! writer.WriteAsync json |> Async.AwaitTask
+                }
+        with
+        | _ -> async { return Error SerializationError }
+    )
+
+let internal deserializeWithThothAsync (path: string) =
+
+    IO (fun () ->   
+        try 
+            asyncResult
+                {
+                    let! fullPath = safeFullPathResult >> runIO <| path
+        
+                    // TODO: Verify TOCTOU effect
+                    do! 
+                        File.Exists fullPath 
+                        |> Result.fromBool fullPath FileNotExisting
+                        |> Result.ignore<string, Errors>
+        
+                    use reader = new StreamReader(fullPath)
+                    let! json = reader.ReadToEndAsync() |> Async.AwaitTask
+        
+                    let! emails = 
+                        Decode.fromString (Decode.list Decode.string) json
+                        |> Result.mapError (fun _ -> DeserializationError)
+        
+                    return emails
+                }
+        with
+        | _ -> async { return Error DeserializationError }
+    )﻿module Settings
+
+let [<Literal>] internal SERVICE_URL = "https://free.eway-crm.com/31994"
+let [<Literal>] internal USERNAME = "api"
+let [<Literal>] internal PASSWORD = "ApiTrial@eWay-CRM"
+let [<Literal>] internal PASSWORD_HASH = "470AE7216203E23E1983EF1851E72947"
+let [<Literal>] internal APP_ID = "ExampleApplication100"
+
+let [<Literal>] internal pathToJson = "emails.json"
+let [<Literal>] internal pathToCRM_Photos = "eWayCRM_Photos"
+let [<Literal>] internal pathTooLongLimit = 200 // to avoid "PathTooLong" issues (max. 260 characters) 
+let [<Literal>] internal maxListBoxItems = 10﻿module Types
+
+//Type Driven Development 
+
+type internal Name = Name of string
+type internal Position = Position of string
+type internal CompanyName = CompanyName of string
+type internal Address = Address of string
+type internal Phone = Phone of string
+type internal Email = Email of string
+type internal PhotoPath = PhotoPath of string﻿module BusinessLogic
+
+open eWayCRM.API
+open Newtonsoft.Json.Linq
+
+open Thoth.Json.Net
+open FsToolkit.ErrorHandling
+
+open Types
+open Helpers
+open ErrorTypes
+open Connection
+open CoreDataModelling
+open IO_MonadSimulation
+open ExternalDataModelling
+
+//***************************************************************
+ 
+let private searchContactsByEmail (email: string) =
+ 
+     withConnection
+        (fun (conn: Connection)
+            -> 
+            option
+                {
+                    let! email = isValidEmail >> runIO <| email
+                    let transmitObject = JObject()
+                    transmitObject.Add("Email1Address", JValue email)
+
+                    let request = JObject()
+                    request.Add("transmitObject", transmitObject)
+                    request.Add("includeProfilePictures", JValue true)
+                    
+                    let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
+                    
+                    (*
+                    System.Diagnostics.Debug.WriteLine("=== FULL RESPONSE ===")
+                    System.Diagnostics.Debug.WriteLine(response.ToString())
+                    System.Diagnostics.Debug.WriteLine("=== END RESPONSE ===")
+                    *)
+                    
+                    let! data = response.["Data"] |> Option.ofNull
+                    
+                    (*
+                    System.Diagnostics.Debug.WriteLine("=== DATA ARRAY ===")
+                    System.Diagnostics.Debug.WriteLine(data.ToString())
+                  
+                    let!_ = 
+                        data.HasValues 
+                        |> Option.fromBool
+                            (                                
+                                let firstContact = data.First :?> JObject
+                                System.Diagnostics.Debug.WriteLine("=== AVAILABLE FIELDS ===")
+                               
+                                firstContact.Properties()
+                                |> Seq.iter 
+                                    (fun prop 
+                                        ->
+                                        prop.Value.ToString()
+                                        |> fun v -> match v.Length > 100 with true -> v.Substring(0, 100) + "..." | false -> v
+                                        |> sprintf "Field: %s = %s" prop.Name
+                                        |> System.Diagnostics.Debug.WriteLine
+                                )
+                                
+                                System.Diagnostics.Debug.WriteLine("=== END FIELDS ===")
+                            )
+                    *)
+
+                    let! dataStr = data.ToString() |> Option.ofNull
+                    let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
+            
+                    return 
+                        dtos
+                        |> List.map ContactTransform.toDomain
+                }
+        )
+
+let internal getUniqueData email =
+
+    IO (fun () ->    
+        result 
+            {
+                let! contacts = 
+                    searchContactsByEmail email
+                    |> runIO
+                    |> Option.toResult ConnectionError
+                
+                return!  
+                    contacts
+                    |> List.map toBusinessCard
+                    |> List.tryFind 
+                        (fun card 
+                            ->
+                            let (Email e) = card.Email
+                            e = email
+                        )
+                    |> Option.toResult CRMError
+            }
+    )﻿module CoreDataModelling
+
+open System
+
+open Types
+open Helpers
+open IO_MonadSimulation
+open ExternalDataModelling 
+
+//=============================================================================
+// eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data)
+//=============================================================================
+
+// DTO
+//*********************************************
+type internal ContactDto =
+    {
+        FirstName: string
+        LastName: string
+        FullName: string
+        Company: string
+        Email: string
+        Phone: string
+        Street: string
+        City: string
+        State: string
+        PostalCode: string
+        FullAddress: string
+        Photo: string option
+    }
+
+// Domain Model
+//*********************************************
+type internal BusinessCard =
+    {
+        Name: Name
+        CompanyName: CompanyName
+        Address: Address
+        Phone: Phone
+        Email: Email
+        Photo: PhotoPath 
+    }
+
+let internal businessCardDefault =
+    { 
+        Name = Name "N/A"
+        CompanyName = CompanyName "N/A"
+        Address = Address "N/A"
+        Phone = Phone "N/A"
+        Email = Email "N/A"
+        Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
+    }
+
+// Transformation Layer 
+//*********************************************
+let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
+    {
+        FirstName = contact.FirstName
+        LastName = contact.LastName
+        FullName = contact.FullName
+        Company = contact.Company
+        Email = contact.Email
+        Phone = contact.Phone
+        Street = contact.Street
+        City = contact.City
+        State = contact.State
+        PostalCode = contact.PostalCode
+        FullAddress = contact.FullAddress
+        Photo = contact.ProfilePicture
+    }
+
+let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessCard =
+
+    let dto = toDto contact 
+    
+    { 
+        Name = dto.FullName |> Name
+        CompanyName = dto.Company |> CompanyName
+        Address = dto.FullAddress |> Address
+        Phone = dto.Phone |> Phone
+        Email = dto.Email |> Email
+        Photo = 
+            dto.Photo 
+            |> Option.defaultWith (fun () -> randomPlaceholderPhotoPath >> runIO <| ())
+            |> PhotoPath
+    }
+
+let internal formatBusinessCard (bc: BusinessCard) : string =
+    [
+        sprintf "Jméno: %s" (let (Name n) = bc.Name in n)
+        sprintf "Společnost: %s" (let (CompanyName c) = bc.CompanyName in c)
+        sprintf "Adresa: %s" (let (Address a) = bc.Address in a)
+        sprintf "Telefon: %s" (let (Phone p) = bc.Phone in p)
+        sprintf "Email: %s" (let (Email e) = bc.Email in e)
+    ]
+    |> String.concat Environment.NewLine﻿module CEBuilders
+        
+type internal MyBuilder = MyBuilder with //This CE is a monad-style control-flow helper, not a monad
+    member _.Recover(m : bool * (unit -> 'a), nextFunc : unit -> 'a) : 'a =
+        match m with
+        | (false, handleFalse)
+            -> handleFalse()
+        | (true, _)
+            -> nextFunc()    
+    member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion      
+    member _.Return x : 'a = x   
+    member _.ReturnFrom x : 'a = x 
+    member _.Using(x : 'a, _body: 'a -> 'b) : 'b = _body x    
+    member _.Delay(f : unit -> 'a) = f()
+    member _.Zero() = ()    
+      
+let internal pyramidOfHell = MyBuilder
+
+//**************************************************************************************
+   
+type Builder2 = Builder2 with    // This CE is a monad-style control-flow helper, not a lawful monad
+    member _.Recover((m, recovery), nextFunc) =
+        match m with
+        | Some v -> nextFunc v
+        | None   -> recovery    
+    member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion        
+    member _.Return x : 'a = x   
+    member _.ReturnFrom x : 'a = x
+    member _.Using(resource, binder) =
+        use r = resource
+        binder r
+        
+let internal pyramidOfDoom = Builder2
+    
+//**************************************************************************************
+       
+type internal MyBuilder3 = MyBuilder3 with  // This CE is a monad-style control-flow helper, not a lawful monad
+    member _.Recover(m, nextFunc) = 
+        match m with
+        | (Ok v, _)           
+            -> nextFunc v 
+        | (Error err, handler) 
+            -> handler err
+    member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion        
+    member _.Zero () = ()       
+    member _.Return x = x
+    member _.ReturnFrom x = x     
+        
+let internal pyramidOfInferno = MyBuilder3  
+
+//**************************************************************************************
+
+type internal MyBuilder5 = MyBuilder5 with   // This CE is a monad-style control-flow helper, not a lawful monad
+    member _.Recover(m : bool * 'a, nextFunc : unit -> 'a) : 'a =
+        match m with
+        | (false, value)
+            -> value
+        | (true, _)
+            -> nextFunc() 
+    member this.Bind(m, f) = this.Recover(m, f) //an alias to prevent confusion              
+    member _.Return x : 'a = x   
+    member _.ReturnFrom x : 'a = x 
+    member _.Using(x : 'a, _body: 'a -> 'b) : 'b = _body x    
+    member _.Delay(f : unit -> 'a) = f()
+    member _.Zero() = ()    
+
+let internal pyramidOfDamnation = MyBuilder5
+
+//**************************************************************************************
+type internal OptionAdaptedBuilder = OptionAdaptedBuilder with
+    member _.Bind(m, nextFunc) =
+        match m with
+        | Some v -> nextFunc v
+        | None   -> None    
+    member _.Return x : 'a = x   
+    member _.ReturnFrom x : 'a = x
+    member _.Using(resource, binder) =
+        use r = resource
+        binder r
+    
+let internal option2 = OptionAdaptedBuilder﻿module Connection
+
+open eWayCRM.API
+open Newtonsoft.Json.Linq
+
+open Settings
+open IO_MonadSimulation
+
+//*****************************************************************************
+ 
+let private establishConnection() = 
+    //new Connection(SERVICE_URL, USERNAME, Connection.HashPassword(PASSWORD), APP_ID)
+    new Connection(SERVICE_URL, USERNAME, PASSWORD_HASH, APP_ID) //to the same effect`
+    
+//*****************************************************************************
+
+let internal withConnection (f: Connection -> 'a option) =  
+
+    IO (fun () ->
+        
+        //[<TailCall>] tested at the module level, no warnings
+        let rec tryWithRetry attemptsLeft =
+            try
+                let conn = establishConnection()
+                try
+                    f conn
+                finally
+                    try 
+                        conn.LogOut() |> ignore<JObject>
+                    with
+                    | _ -> ()
+            with
+            | _ when attemptsLeft > 0 
+                -> 
+                tryWithRetry (attemptsLeft - 1)
+            | _ -> 
+                None
+        
+        tryWithRetry 1  // 1 retry = 2 total attempts
+    )
+//****************************************************************************
+
+//A connectivity listener not added here yet as this would mean dabble with UI/UX and controls in XAML again.
+//You may look how I dealt with connectivity listening in the past here:
+//https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Connectivity/Connectivity.fs
+
+let private connectionInstance = IO (fun () -> lazy (establishConnection()))  //Not used yet
+
+let internal withConnection2 (f: Connection -> 'a option) = //Not used yet
+
+    IO (fun () ->
+        try
+            f (runIO connectionInstance).Value
+        with
+        | _ -> None
+    )
+
+let internal cleanup() =  //Not used yet
+
+    IO (fun () ->
+        match (runIO connectionInstance).IsValueCreated with
+        | false 
+            -> ()
+        | true 
+            ->
+            try 
+                (runIO connectionInstance).Value.LogOut() |> ignore<JObject>
+            with 
+            | _ -> ()
+    )﻿namespace eWay_CRM_testApp.Models
+
+open System
+
+open Elmish
+open Elmish.WPF
+
+open FsToolkit.ErrorHandling
+
+open Types
+open Helpers
+open CEBuilders
+open ErrorTypes
+open BusinessLogic
+open ErrorHandling
+open CoreDataModelling
+open IO_MonadSimulation
+open EmailHistoryModelling
+
+//***************************************************************
+
+module E_Way =
+
+    type internal Model =
+        { 
+            MessageDisplayText: BusinessCard
+            EmailInputString: string
+            EmailAddresses: string list
+            SelectedEmail: string option
+            ErrorMessage: string option
+        }  
+
+    type Msg =
+        | EmailInputStringChanged of string
+        | EmailSelected of string option
+        | EmailsLoaded of Result<string list, Errors>
+        | EmailsSaved of Result<unit, Errors>
+        | ShowData    
+      
+    let internal initialModel listOfEmails =
+        {
+            MessageDisplayText = businessCardDefault
+            EmailInputString = String.Empty
+            EmailAddresses = listOfEmails
+            SelectedEmail = None
+            ErrorMessage = None
+        }
+
+    let internal loadEmailsCmd () =
+        Cmd.OfAsync.perform
+            (fun () -> fromDto >> runIO <| ())
+            ()
+            EmailsLoaded  
+
+    let internal saveEmailsCmd newEmails =
+        Cmd.OfAsync.perform
+            (fun () -> toDto >> runIO <| newEmails)
+            ()
+            EmailsSaved
+    
+    let internal init () : Model * Cmd<Msg> =
+
+        let initialEmailList =  //for testing only
+            [
+                "mroyster@royster.com"
+                "ealbares@gmail.com"
+                "oliver@hotmail.com"
+                //"michael.ostrosky@ostrosky.com"
+                //"kati.rulapaugh@hotmail.com"            
+            ]
+
+        let initialEmailList = List.Empty  
+
+        let m = initialModel initialEmailList  // Start with default/empty list
+        m, loadEmailsCmd ()
+    
+    let internal update msg m =
+        match msg with
+        | EmailsLoaded (Ok emails) 
+            ->
+            { m with EmailAddresses = emails }, Cmd.none
+        
+        | EmailsLoaded (Error err) 
+            ->
+            let errMsg = errFn err
+            { m with ErrorMessage = Some errMsg }, Cmd.none
+
+        | EmailsSaved (Ok _) 
+            ->
+            m, Cmd.none
+
+        | EmailsSaved (Error err) 
+            ->
+            let errMsg = errFn err
+            { m with ErrorMessage = Some errMsg }, Cmd.none
+
+        | EmailInputStringChanged email
+            ->
+            let typedEmail = email.Trim()
+        
+            let newEmails =
+                pyramidOfDoom
+                    {
+                        let! validEmail = isValidEmail >> runIO <| typedEmail, m.EmailAddresses
+                        let cond = (validEmail <> String.Empty && not (m.EmailAddresses |> List.contains validEmail))
+                        let! _ = cond |> Option.ofBool, m.EmailAddresses
+                        return typedEmail :: m.EmailAddresses 
+                    }
+           
+            let errorMsg =
+                isValidEmail >> runIO <| typedEmail
+                |> Option.map (fun _ -> None)  // Valid -> None (no error)
+                |> Option.defaultValue (Some <| errFn UserInputError1)  // Invalid -> Some error
+        
+            {
+                m with
+                    EmailInputString = typedEmail
+                    EmailAddresses = newEmails
+                    MessageDisplayText =
+                        getUniqueData >> runIO <| typedEmail
+                        |> Result.defaultWith
+                            (fun err 
+                                -> 
+                                let errMsg2 = errFn err
+                                { businessCardDefault with Email = Email errMsg2 }   
+                            )
+                    ErrorMessage = errorMsg
+            }, saveEmailsCmd newEmails
+    
+        | EmailSelected emailOpt 
+            ->
+            match emailOpt with
+            | Some email
+                ->
+                let valid = isValidEmail >> runIO <| email
+                let updatedModel =
+                    { 
+                        m with
+                            SelectedEmail = Some email
+                            EmailInputString = email
+                            ErrorMessage = 
+                                valid 
+                                |> Option.map (fun _ -> None)
+                                |> Option.defaultValue (Some <| errFn UserInputError1)
+                    }
+    
+                match valid with
+                | Some email  
+                    ->
+                    { 
+                        updatedModel with
+                            MessageDisplayText =
+                                getUniqueData >> runIO <| email 
+                                |> Result.defaultWith
+                                    (fun err 
+                                        -> 
+                                        let errMsg = errFn err
+                                        { businessCardDefault with Email = Email errMsg }
+                                    )  
+                    }, Cmd.none
+                | None
+                    ->
+                    updatedModel, Cmd.none
+    
+            | None -> { m with SelectedEmail = None }, Cmd.none
+    
+        | ShowData 
+            ->
+            let typedEmail = m.EmailInputString.Trim()
+
+            pyramidOfDamnation
+                {
+                    let! _ = 
+                        (typedEmail <> String.Empty, 
+                            ({ m with ErrorMessage = Some <| errFn UserInputError2 }, Cmd.none)) 
+                
+                    let! _ = 
+                        ((isValidEmail >> runIO <| typedEmail) |> Option.toBool,
+                            ({ m with ErrorMessage = Some <| errFn UserInputError1 }, Cmd.none))
+                
+                    let updatedEmails =
+                        match not (m.EmailAddresses |> List.contains typedEmail) with
+                        | true  -> typedEmail :: m.EmailAddresses
+                        | false -> m.EmailAddresses
+                
+                    return 
+                        {
+                            m with
+                                MessageDisplayText = 
+                                    getUniqueData >> runIO <| typedEmail
+                                    |> Result.defaultWith 
+                                        (fun err
+                                            -> 
+                                            let errMsg = errFn err
+                                            { businessCardDefault with Email = Email errMsg } 
+                                        )  
+                                EmailAddresses = updatedEmails
+                                ErrorMessage = None
+                        }, Cmd.none
+                }
+
+    let internal bindings () : Binding<Model, Msg> list =
+        [
+            "MessageDisplayText"
+            |> Binding.oneWay (fun m -> formatBusinessCard m.MessageDisplayText)
+    
+            "PhotoPath"
+            |> Binding.oneWay 
+                (fun m 
+                    ->
+                    let (PhotoPath path) = m.MessageDisplayText.Photo
+                    path
+                )
+    
+            "EmailInputButton"
+            |> Binding.cmd ShowData
+    
+            "EmailInputString"
+            |> Binding.twoWay
+                (
+                    (fun m -> m.EmailInputString),
+                        EmailInputStringChanged
+                )
+    
+            "EmailAddresses"
+            |> Binding.oneWay (fun m -> m.EmailAddresses)
+    
+            "SelectedEmail"
+            |> Binding.twoWayOpt
+                (
+                    (fun m -> m.SelectedEmail),
+                        EmailSelected
+                )
+
+            "ErrorMessage"
+            |> Binding.oneWay (fun m -> m.ErrorMessage |> Option.defaultValue String.Empty)
+        ]﻿module EmailHistoryModelling
+
+open Settings
+open Serialization
+open IO_MonadSimulation
+
+// DTO 
+//*********************************************
+type internal EmailHistoryDto =
+    {
+        Emails : string list
+    }
+
+// Domain Model
+//*********************************************
+type internal EmailHistoryDm =
+    {
+        TruncatedEmailList : string list
+    }
+
+// Transformation Layer 
+//*********************************************
+let internal fromDto () =
+    IO (fun () ->
+        async
+            {
+                let! emailList = deserializeWithThothAsync >> runIO <| pathToJson   
+
+                match emailList with
+                | Ok emails
+                    ->                             
+                    let truncatedEmailList = { TruncatedEmailList = emails |> List.truncate maxListBoxItems } 
+                    return Ok truncatedEmailList.TruncatedEmailList  
+                                      
+                | Error err 
+                    ->
+                    return Error err
+            } 
+    )
+
+let internal toDto newEmails =
+    IO (fun () ->
+        let newEmails = { Emails = newEmails }     
+        runIO <| serializeWithThothAsync newEmails.Emails pathToJson    
+    )﻿module ErrorHandling
+
+open ErrorTypes
+
+let internal errFn =  
+   
+    function
+        | FileNotExisting -> "Soubor s uloženým emailem neexistuje."
+        | ImageFileNotExisting -> "Soubor s uloženou fotografií neexistuje."  //not used yet
+        | SerializationError -> "Kontakty nebyly uloženy."
+        | DeserializationError -> "Kontakty nebyly načteny."
+        | CRMError -> "Nebylo možno získat data z CRM na základě příslušného emailu."
+        | ConnectionError -> "Nebylo možno získat data. Ověř formát emailu a připojení."
+        | UserInputError1 -> "Chybný formát emailu."
+        | UserInputError2 -> "Prosím zadejte platný email."﻿module ErrorTypes
+
+type [<Struct>] Errors =
+    | FileNotExisting
+    | ImageFileNotExisting //not used yet
+    | SerializationError 
+    | DeserializationError 
+    | CRMError 
+    | ConnectionError  
+    | UserInputError1 
+    | UserInputError2﻿module Helpers
+
+open System
+
+open FsToolkit.ErrorHandling
+open System.Text.RegularExpressions
+
+open IO_MonadSimulation
+
+//Only domains with 2-3 letter TLDs are allowed 
+let private emailRegex =
+    IO (fun () ->   
+        try
+            Regex
+                (
+                    @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3}$",
+                        RegexOptions.IgnoreCase ||| RegexOptions.Compiled
+                )
+            |> Option.ofNull
+        with
+        | _ -> None
+    )
+
+let internal isValidEmail (email: string) =
+    IO (fun () ->
+        option
+            {
+                let! emailRegex = runIO emailRegex
+                let! _ = email |> Option.ofNullEmptySpace
+                let! _ = emailRegex.IsMatch email |> Option.ofBool
+
+                return! email
+            }
+    )
+
+let internal randomPlaceholderPhotoPath () =
+    let placeholders =
+        [|
+            @"Resources/placeholder1.jpg"
+            @"Resources/placeholder2.jpg" 
+        |]
+    
+    IO (fun () ->          
+        placeholders 
+        |> Array.item (Random().Next (placeholders |> Array.length))            
+    )

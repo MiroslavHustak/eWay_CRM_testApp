@@ -23,14 +23,17 @@ let private emailRegex =
 
 let internal isValidEmail (email: string) =
     IO (fun () ->
-        option
-            {
-                let! emailRegex = runIO emailRegex
-                let! _ = email |> Option.ofNullEmptySpace
-                let! _ = emailRegex.IsMatch email |> Option.ofBool
+        try
+            option
+                {
+                    let! emailRegex = runIO emailRegex
+                    let! _ = email |> Option.ofNullEmptySpace
+                    let! _ = emailRegex.IsMatch email |> Option.ofBool
 
-                return! email
-            }
+                    return! email
+                }
+        with
+        | _ -> None
     )
 
 let internal randomPlaceholderPhotoPath () =
@@ -40,7 +43,10 @@ let internal randomPlaceholderPhotoPath () =
             @"Resources/placeholder2.jpg" 
         |]
     
-    IO (fun () ->          
-        placeholders 
-        |> Array.item (Random().Next (placeholders |> Array.length))            
+    IO (fun () ->    
+        try
+            placeholders 
+            |> Array.item (Random().Next (placeholders |> Array.length)) 
+        with
+        | _ -> @"Resources/placeholder1.jpg"   
     )
