@@ -55,7 +55,6 @@ namespace eWay_CRM_testApp
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Debug.WriteLine($"Convert called with value = {value}");
-
             if (value == null)
             {
                 Debug.WriteLine("PhotoPathToUriConverter: value is null");
@@ -73,7 +72,6 @@ namespace eWay_CRM_testApp
             else
             {
                 // Try to get the underlying value from F# wrapped type
-                // F# single-case unions have an Item property
                 var itemProperty = value.GetType().GetProperty("Item");
                 if (itemProperty != null)
                 {
@@ -98,27 +96,41 @@ namespace eWay_CRM_testApp
                 return null;
             }
 
-            // Resolve the Photos folder next to the executable
             string exeDir = AppContext.BaseDirectory;
-            string photosDir = Path.Combine(exeDir, "Photos");
-            string fullPath = Path.Combine(photosDir, fileName);
+            string fullPath;
 
-            /*
-            Debug.WriteLine($"PhotoPathToUriConverter: BaseDirectory: {exeDir}");
-            Debug.WriteLine($"PhotoPathToUriConverter: Photos directory: {photosDir}");
-            Debug.WriteLine($"PhotoPathToUriConverter: Full path: {fullPath}");
+            // Check if path already includes a directory (like "Resources/...")
+            if (fileName.Contains("/") || fileName.Contains("\\"))
+            {
+                // Path includes directory, resolve relative to exe
+                fullPath = Path.Combine(exeDir, fileName.Replace('/', Path.DirectorySeparatorChar));
+                Debug.WriteLine($"PhotoPathToUriConverter: Path with directory: {fullPath}");
+            }
+            else
+            {
+                // Just a filename, try Photos directory first
+                string photosDir = Path.Combine(exeDir, "Photos");
+                fullPath = Path.Combine(photosDir, fileName);
+                Debug.WriteLine($"PhotoPathToUriConverter: Trying Photos directory: {fullPath}");
+
+                // If not found in Photos, try Resources as fallback
+                if (!File.Exists(fullPath))
+                {
+                    fullPath = Path.Combine(exeDir, "Resources", fileName);
+                    Debug.WriteLine($"PhotoPathToUriConverter: File not in Photos, trying Resources: {fullPath}");
+                }
+            }
+
             Debug.WriteLine($"PhotoPathToUriConverter: File exists: {File.Exists(fullPath)}");
-            */
 
             if (!File.Exists(fullPath))
             {
-                // fallback to placeholder if file not found
-                fullPath = Path.Combine(photosDir, "placeholder1.jpg");
-                Debug.WriteLine($"PhotoPathToUriConverter: Using placeholder: {fullPath}");
-
+                // Ultimate fallback to Resources placeholder
+                fullPath = Path.Combine(exeDir, "Resources", "placeholder2.jpg");
+                Debug.WriteLine($"PhotoPathToUriConverter: Using fallback placeholder: {fullPath}");
                 if (!File.Exists(fullPath))
                 {
-                    Debug.WriteLine("PhotoPathToUriConverter: Placeholder not found either!");
+                    Debug.WriteLine("PhotoPathToUriConverter: Fallback placeholder not found either!");
                     return null;
                 }
             }

@@ -1,5 +1,7 @@
 ﻿module Helpers
 
+open System
+
 open FsToolkit.ErrorHandling
 open System.Text.RegularExpressions
 
@@ -31,13 +33,14 @@ let internal isValidEmail (email: string) =
             }
     )
 
-let internal randomPlaceholderPhotoPath () = 
-    IO (fun () ->
-        let placeholders = [| "placeholder1.jpg"; "placeholder2.jpg" |]
-        let random = System.Random()        
+let internal randomPlaceholderPhotoPath () =
+    let placeholders =
+        [|
+            @"Resources/placeholder1.jpg"
+            @"Resources/placeholder2.jpg" 
+        |]
+    
+    IO (fun () ->          
         placeholders 
-        |> Array.item
-            (
-                random.Next (placeholders |> Array.length)
-            )
+        |> Array.item (Random().Next (placeholders |> Array.length))            
     )

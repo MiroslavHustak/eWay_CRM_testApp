@@ -47,7 +47,9 @@
   <ItemGroup>
 	  <None Include="Photos\*.jpg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>  
+	  </None>
+	  <Content Include="Resources\placeholder1.jpg" />
+	  <Content Include="Resources\placeholder2.jpg" />  
     <Folder Include="bin\Release\net9.0-windows\" />
   </ItemGroup>
 

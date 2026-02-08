@@ -11,31 +11,17 @@
   <ItemGroup>
 	  <Resource Include="Resources\Graphicloads-Food-Drink-Teapot.ico" />
 	  <Resource Include="Resources\sunny_sun_cloud.ico" />
+	  <Resource Include="Resources\placeholder1.jpg" />
+	  <Resource Include="Resources\placeholder2.jpg" />
 	  <None Include="Photos\*.jpg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\BouncyCastle.Crypto.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Common.Logging.Core.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Common.Logging.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\ExcelDataReader.DataSet.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\ExcelDataReader.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\FSharp.Core.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\FSharpLibrary.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Microsoft.mshtml.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\PdfFileWriter.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Spire.License.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Spire.Pdf.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\System.Runtime.CompilerServices.Unsafe.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\System.Threading.Tasks.Extensions.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Unity.Abstractions.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\Unity.Container.dll" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\XLSX_To_PDF.exe" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\XLSX_To_PDF.exe.config" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\XLSX_To_PDF_JPG_forWPF.exe" />
-    <None Include="bin\Release\net9.0-windows\Xlsx_To_Jpg_PDF\XLSX_To_PDF_JPG_forWPF.exe.config" />
+	  </None>	
+	  <Content Include="Resources\placeholder1.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\placeholder2.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
   <ItemGroup>
