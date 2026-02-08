@@ -41,7 +41,7 @@ https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Except
 
 Používal jsem vibe coding?
 
-Sice ano (hlavně u saveBase64ImageToFile, searchContactsByEmail a vše s regexem :-), vibe code je ale dost upravovaný, on samozřejmě nevypadal/nefungoval dle mých představ, neb LLMka ještě neuznaly za vhodné používat mé vlastní knihovny :-) ), ale ostatní kód v aplikaci je většinou můj vlastní "pre-LLM" kód recyklovaný z těchto aplikací:
+Sice ano (hlavně u saveBase64ImageToFile, searchContactsByEmail a Regex :-), vibe code je ale dost upravovaný, on samozřejmě nevypadal/nefungoval dle mých představ, neb LLMka ještě neuznaly za vhodné používat mé vlastní knihovny :-) ), ale ostatní kód v aplikaci je většinou můj vlastní "pre-LLM" kód recyklovaný z těchto aplikací:
 https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI
 [https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator](https://github.com/MiroslavHustak/Unique_Identifier_And_Metadata_File_Creator/tree/master/Unique_Identifier_And_Metadata_File_Creator.Models/XElmish)
 
