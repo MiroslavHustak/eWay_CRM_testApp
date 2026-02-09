@@ -70,9 +70,9 @@ type Contact =
 module ContactTransform =
 
     open ImageHelper  
+          
+    let internal toDomain (dto: ContactDto) : Contact =        
     
-    let internal toDomain (dto: ContactDto) : Contact =
-
         let firstName = dto.FirstName |> Option.defaultValue String.Empty
         let lastName = dto.LastName |> Option.defaultValue String.Empty
         let email = dto.Email1Address |> Option.defaultValue String.Empty
@@ -81,7 +81,7 @@ module ContactTransform =
         let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
         let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
         let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
-        let phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty
+        let phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty 
         
         let fullName = 
             match firstName.Trim(), lastName.Trim() with

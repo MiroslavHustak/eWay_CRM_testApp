@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Include="Settings\Settings.fs" />
+    <Compile Include="Types\Grid3Algebra.fs" />
     <Compile Include="Types\ErrorTypes.fs" />
     <Compile Include="Types\IO_MonadSimulation.fs" />
     <Compile Include="Types\TDD.fs" />

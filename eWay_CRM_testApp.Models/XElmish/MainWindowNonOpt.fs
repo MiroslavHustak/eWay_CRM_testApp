@@ -150,8 +150,7 @@ module MainWindowNonOpt =
             "SelectedTabHeader"
             |> Binding.twoWay
                 (
-                    (fun m -> m.SelectedTabHeader),
-                    SetSelectedTabHeader
+                    (fun m -> m.SelectedTabHeader), SetSelectedTabHeader
                 )
         ]
         
