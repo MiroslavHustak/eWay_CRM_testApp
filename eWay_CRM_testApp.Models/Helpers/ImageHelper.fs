@@ -41,17 +41,12 @@ let internal saveBase64ImageToFile (base64String: string) (email: string) =
                             | true  -> Some dir
                             | false -> None
                         with
-                        | _  -> None
-                
-                    let sanitizedEmail = 
-                        validEmail
-                        |> String.filter (fun c -> Char.IsLetterOrDigit(c) || c = '@' || c = '.')                    
+                        | _  -> None                          
                 
                     let fileBaseName = 
-                        match sanitizedEmail with
-                        | s when s = String.Empty                        
-                            -> "unknown"
-                        | s -> s
+                        validEmail
+                        |> String.filter (fun c -> Char.IsLetterOrDigit c || c = '@' || c = '.') 
+                        |> function s when s = String.Empty -> "unknown" | s -> s                 
                 
                     let fileName = sprintf "%s_%s.png" fileBaseName (Guid.NewGuid().ToString("N").Substring(0, 8))
                     let filePath = Path.Combine(dirInfo.FullName, fileName)

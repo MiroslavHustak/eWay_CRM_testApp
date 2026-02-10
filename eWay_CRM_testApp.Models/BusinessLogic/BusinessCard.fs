@@ -18,7 +18,7 @@ open ExternalDataModelling
  
 let private searchContactsByEmail (email: string) =
  
-     withConnection
+     withConnection //already includes try-with block
         (fun (conn: Connection)
             -> 
             option
