@@ -5,7 +5,7 @@ UPDATE 08-02-2026
 
 Vzhledem k tomu, že jsem s kódem spěchal kvůli jiným aktivitám, ale onemocněl jsem a do termínu 09-02-2026 zbývá nějaký čas, leccos jsem do kódu přidal od doby jeho prvního umístění do repo. 
 
-Kompletní VS solution zde: https://www.uschovna.cz/zasilka/UL9KBG95HYDTAHM9-HEM/
+Kompletní VS solution zde: https://www.uschovna.cz/zasilka/ULW3J43KTSTS77H8-M74/
 ****************************************************************************
 
 Build dává varování kvůli konfliktu .NET 9 a .NET Framework (eWay-CRM API), což už nemám čas předělávat, ale aplikace funguje.
