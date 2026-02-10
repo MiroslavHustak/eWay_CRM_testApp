@@ -45,9 +45,7 @@ let internal saveBase64ImageToFile (base64String: string) (email: string) =
                 
                     let sanitizedEmail = 
                         validEmail
-                        |> Seq.filter (fun c -> Char.IsLetterOrDigit(c) || c = '@' || c = '.')
-                        |> Seq.toArray
-                        |> String
+                        |> String.filter (fun c -> Char.IsLetterOrDigit(c) || c = '@' || c = '.')                    
                 
                     let fileBaseName = 
                         match sanitizedEmail with

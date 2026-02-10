@@ -206,28 +206,19 @@ module E_Way =
     
             "PhotoPath"
             |> Binding.oneWay 
-                (fun m 
-                    ->
-                    let (PhotoPath path) = m.MessageDisplayText.Photo in path
-                )
+                (fun m -> let (PhotoPath path) = m.MessageDisplayText.Photo in path)
     
             "EmailInputButton"
             |> Binding.cmd ShowData
     
             "EmailInputString"
-            |> Binding.twoWay
-                (
-                    (fun m -> m.EmailInputString), EmailInputStringChanged
-                )
+            |> Binding.twoWay ((fun m -> m.EmailInputString), EmailInputStringChanged)
     
             "EmailAddresses"
             |> Binding.oneWay (fun m -> m.EmailAddresses)
     
             "SelectedEmail"
-            |> Binding.twoWayOpt
-                (
-                    (fun m -> m.SelectedEmail), EmailSelected
-                )
+            |> Binding.twoWayOpt ((fun m -> m.SelectedEmail), EmailSelected)
 
             "ErrorMessage"
             |> Binding.oneWay (fun m -> m.ErrorMessage |> Option.defaultValue String.Empty)
