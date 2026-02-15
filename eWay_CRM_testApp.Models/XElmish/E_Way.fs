@@ -206,7 +206,7 @@ module E_Way =
     
             "PhotoPath"
             |> Binding.oneWay 
-                (fun m -> let (PhotoPath path) = m.MessageDisplayText.Photo in path)
+                 (fun m -> let (PhotoPath path) = m.MessageDisplayText.Photo in path)
     
             "EmailInputButton"
             |> Binding.cmd ShowData

@@ -33,7 +33,7 @@
             </TabControl.ItemTemplate>
 
             <TabControl.ContentTemplate>
-                <DataTemplate>                 
+                <DataTemplate>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

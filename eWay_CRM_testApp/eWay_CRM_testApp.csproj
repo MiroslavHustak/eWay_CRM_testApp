@@ -1,41 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-	<LIB></LIB>
-	 <NoWarn>$(NoWarn);1668</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LIB></LIB>
+		<NoWarn>$(NoWarn);1668</NoWarn>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <Resource Include="Resources\Graphicloads-Food-Drink-Teapot.ico" />
-	  <Resource Include="Resources\sunny_sun_cloud.ico" />
-	  <Resource Include="Resources\placeholder1.jpg" />
-	  <Resource Include="Resources\placeholder2.jpg" />
-	  <None Include="Photos\*.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>	
-	  <Content Include="Resources\placeholder1.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Resources\placeholder2.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-  </ItemGroup>
+	<PropertyGroup>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Elmish" Version="3.1.0" />
-    <PackageReference Include="Elmish.WPF" Version="4.0.0-beta-42" />
-    <PackageReference Include="eWayCRM.API" Version="1.6.4" />
-    <PackageReference Include="FSharp.Core" Version="10.0.102" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\Graphicloads-Food-Drink-Teapot.ico" />
+		<Resource Include="Resources\sunny_sun_cloud.ico" />
+		<Resource Include="Resources\placeholder1.jpg" />
+		<Resource Include="Resources\placeholder2.jpg" />
+		<None Include="Photos\*.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<Content Include="Resources\placeholder1.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\placeholder2.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\eWay_CRM_testApp.Models\eWay_CRM_testApp.Models.fsproj" />
-  </ItemGroup> 	
+	<ItemGroup>
+		<PackageReference Include="Elmish" Version="3.1.0" />
+		<PackageReference Include="Elmish.WPF" Version="4.0.0-beta-42" />
+		<PackageReference Include="eWayCRM.API" Version="1.6.4" />
+		<PackageReference Include="FSharp.Core" Version="10.0.102" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
+	</ItemGroup>
 
- </Project>
+	<ItemGroup>
+		<ProjectReference Include="..\eWay_CRM_testApp.Models\eWay_CRM_testApp.Models.fsproj" />
+	</ItemGroup>
+
+</Project>

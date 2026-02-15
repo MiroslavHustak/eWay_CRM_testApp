@@ -1,58 +1,62 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-	 <LIB></LIB>
-	 <NoWarn>$(NoWarn);1668</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LIB></LIB>
+		<NoWarn>$(NoWarn);1668</NoWarn>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Settings\Settings.fs" />
-    <Compile Include="Types\Grid3Algebra.fs" />
-    <Compile Include="Types\ErrorTypes.fs" />
-    <Compile Include="Types\IO_MonadSimulation.fs" />
-    <Compile Include="Types\TDD.fs" />
-    <Compile Include="ErrorHandling\ErrorHandling.fs" />
-    <Compile Include="CEBuilders\CEBuilders.fs" />
-    <Compile Include="OptionResultExtensions\OptionExtensions.fs" />
-    <Compile Include="OptionResultExtensions\ResultExtensions.fs" />
-    <Compile Include="Connection\Connection.fs" />
-    <Compile Include="Helpers\Helpers.fs" />
-    <Compile Include="Helpers\ImageHelper.fs" />
-    <Compile Include="Serialization\Serialization.fs" />
-    <Compile Include="ExternalDataModelling\RawCRMDataDM.fs" />
-    <Compile Include="EmailHistoryModelling\EmailHistoryModelling.fs" />
-    <Compile Include="CoreDataModelling\BusinessCardDM.fs" />
-    <Compile Include="BusinessLogic\BusinessCard.fs" />
-    <Compile Include="XElmish\E_Way.fs" />
-    <Compile Include="XElmish\MainWindowNonOpt.fs" />
-    <Compile Include="XElmish\Program.fs" />
-  </ItemGroup>
+	<PropertyGroup>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Elmish" Version="3.1.0" />
-    <PackageReference Include="Elmish.WPF" Version="4.0.0-beta-42" />
-    <PackageReference Include="eWayCRM.API" Version="1.6.4" />
-    <PackageReference Include="FSharp.Collections.ParallelSeq" Version="1.2.0" />
-    <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-    <PackageReference Include="FsToolkit.ErrorHandling" Version="5.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="Settings\Settings.fs" />
+		<Compile Include="Types\Grid3Algebra.fs" />
+		<Compile Include="Types\ErrorTypes.fs" />
+		<Compile Include="Types\IO_MonadSimulation.fs" />
+		<Compile Include="Types\TDD.fs" />
+		<Compile Include="ErrorHandling\ErrorHandling.fs" />
+		<Compile Include="CEBuilders\CEBuilders.fs" />
+		<Compile Include="OptionResultExtensions\OptionExtensions.fs" />
+		<Compile Include="OptionResultExtensions\ResultExtensions.fs" />
+		<Compile Include="Connection\Connection.fs" />
+		<Compile Include="Helpers\Helpers.fs" />
+		<Compile Include="Helpers\ImageHelper.fs" />
+		<Compile Include="Serialization\Serialization.fs" />
+		<Compile Include="ExternalDataModelling\RawCRMDataDM.fs" />
+		<Compile Include="EmailHistoryModelling\EmailHistoryModelling.fs" />
+		<Compile Include="CoreDataModelling\BusinessCardDM.fs" />
+		<Compile Include="BusinessLogic\BusinessCard.fs" />
+		<Compile Include="XElmish\E_Way.fs" />
+		<Compile Include="XElmish\MainWindowNonOpt.fs" />
+		<Compile Include="XElmish\Program.fs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="10.0.102" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Elmish" Version="3.1.0" />
+		<PackageReference Include="Elmish.WPF" Version="4.0.0-beta-42" />
+		<PackageReference Include="eWayCRM.API" Version="1.6.4" />
+		<PackageReference Include="FSharp.Collections.ParallelSeq" Version="1.2.0" />
+		<PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+		<PackageReference Include="FsToolkit.ErrorHandling" Version="5.1.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <None Include="Photos\*.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <Content Include="Resources\placeholder1.jpg" />
-	  <Content Include="Resources\placeholder2.jpg" />  
-    <Folder Include="bin\Release\net9.0-windows\" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Update="FSharp.Core" Version="10.0.102" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Photos\*.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<Content Include="Resources\placeholder1.jpg" />
+		<Content Include="Resources\placeholder2.jpg" />
+		<Folder Include="bin\Release\net9.0-windows\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Resource Include="Resources\Graphicloads-Food-Drink-Teapot.ico" />

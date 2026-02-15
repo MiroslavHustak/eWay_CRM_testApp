@@ -49,13 +49,13 @@
                      ItemsSource="{Binding EmailAddresses}" 
                      SelectedItem="{Binding SelectedEmail}" 
                      Width="360" Height="200" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-           
+
             <!-- Photo -->
             <Label Grid.Column="0" Grid.Row="3" Foreground="White" FontWeight="Bold"
                 Content="Fotografie" HorizontalAlignment="Left"/>
             <Image Grid.Column="0" Grid.Row="4" Width="67" Height="40" Margin="5,5,0,0" HorizontalAlignment="Left"
                 Source="{Binding PhotoPath, Converter={StaticResource PhotoPathToUriConverter}}"/>
-           
+
             <!-- Business card text -->
             <Label Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="1" Foreground="White" FontWeight="Bold"
                    Content="Detail kontaktní osoby"/>
