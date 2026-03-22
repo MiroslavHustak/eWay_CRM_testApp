@@ -4,9 +4,9 @@ open Settings
 open Serialization
 open IO_MonadSimulation
 
-// DTO 
+// DTM
 //*********************************************
-type internal EmailHistoryDto =
+type internal EmailHistoryDtm =
     {
         Emails : string list
     }
@@ -20,7 +20,7 @@ type internal EmailHistoryDm =
 
 // Transformation Layer 
 //*********************************************
-let internal fromDto () =
+let internal fromDtm () =
     IO (fun () ->
         async
             {
@@ -38,7 +38,7 @@ let internal fromDto () =
             } 
     )
 
-let internal toDto newEmails =
+let internal toDtm newEmails =
     IO (fun () ->
         let newEmails = { Emails = newEmails }     
         runIO <| serializeWithThothAsync newEmails.Emails pathToJson    

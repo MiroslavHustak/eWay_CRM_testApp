@@ -9,9 +9,9 @@ open IO_MonadSimulation
 // Raw eWay CRM <-> My app contact data 
 //=============================================================================
 
-// DTO
+// DTM
 //*********************************************
-type ContactDto =
+type ContactDtm =
     { 
         FirstName: string option
         LastName: string option
@@ -27,7 +27,7 @@ type ContactDto =
         ProfilePictureHeight: int option
     }
 
-let contactDtoDecoder : Decoder<ContactDto> =
+let contactDtmDecoder : Decoder<ContactDtm> =
     Decode.object
         (fun get 
             ->
@@ -71,17 +71,17 @@ module ContactTransform =
 
     open ImageHelper  
           
-    let internal toDomain (dto: ContactDto) : Contact =        
+    let internal toDomain (dtm: ContactDtm) : Contact =        
     
-        let firstName = dto.FirstName |> Option.defaultValue String.Empty
-        let lastName = dto.LastName |> Option.defaultValue String.Empty
-        let email = dto.Email1Address |> Option.defaultValue String.Empty
-        let company = dto.Company |> Option.defaultValue String.Empty
-        let street = dto.BusinessAddressStreet |> Option.defaultValue String.Empty
-        let city = dto.BusinessAddressCity |> Option.defaultValue String.Empty
-        let state = dto.BusinessAddressState |> Option.defaultValue String.Empty
-        let postalCode = dto.BusinessAddressPostalCode |> Option.defaultValue String.Empty
-        let phone = dto.TelephoneNumber1 |> Option.defaultValue String.Empty 
+        let firstName = dtm.FirstName |> Option.defaultValue String.Empty
+        let lastName = dtm.LastName |> Option.defaultValue String.Empty
+        let email = dtm.Email1Address |> Option.defaultValue String.Empty
+        let company = dtm.Company |> Option.defaultValue String.Empty
+        let street = dtm.BusinessAddressStreet |> Option.defaultValue String.Empty
+        let city = dtm.BusinessAddressCity |> Option.defaultValue String.Empty
+        let state = dtm.BusinessAddressState |> Option.defaultValue String.Empty
+        let postalCode = dtm.BusinessAddressPostalCode |> Option.defaultValue String.Empty
+        let phone = dtm.TelephoneNumber1 |> Option.defaultValue String.Empty 
         
         let fullName = 
             match firstName.Trim(), lastName.Trim() with
@@ -104,7 +104,7 @@ module ContactTransform =
             |> function s when s = String.Empty -> "N/A" | s -> s
         
         let photoPath =
-            dto.ProfilePicture
+            dtm.ProfilePicture
             |> Option.bind (fun base64 -> runIO <| saveBase64ImageToFile base64 email)
         
         { 

@@ -67,10 +67,10 @@ let private searchContactsByEmail (email: string) =
                     *)
 
                     let! dataStr = data.ToString() |> Option.ofNull
-                    let! dtos = Decode.fromString (Decode.list contactDtoDecoder) dataStr |> Result.toOption
+                    let! dtms = Decode.fromString (Decode.list contactDtmDecoder) dataStr |> Result.toOption
             
                     return 
-                        dtos
+                        dtms
                         |> List.map ContactTransform.toDomain
                 }
         )

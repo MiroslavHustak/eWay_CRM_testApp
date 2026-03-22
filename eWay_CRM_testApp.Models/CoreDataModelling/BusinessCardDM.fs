@@ -11,9 +11,9 @@ open ExternalDataModelling
 // eWay CRM (Transformation -> My business card <-> transformed eWay CRM contact data)
 //=============================================================================
 
-// DTO
+// DTM
 //*********************************************
-type internal ContactDto =
+type internal ContactDtm =
     {
         FirstName: string
         LastName: string
@@ -53,7 +53,7 @@ let internal businessCardDefault =
 
 // Transformation Layer 
 //*********************************************
-let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
+let private toDtm (contact: ExternalDataModelling.Contact) : ContactDtm =
     {
         FirstName = contact.FirstName
         LastName = contact.LastName
@@ -71,16 +71,16 @@ let private toDto (contact: ExternalDataModelling.Contact) : ContactDto =
 
 let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessCard =
 
-    let dto = toDto contact 
+    let dtm = toDtm contact 
     
     { 
-        Name = dto.FullName |> Name
-        CompanyName = dto.Company |> CompanyName
-        Address = dto.FullAddress |> Address
-        Phone = dto.Phone |> Phone
-        Email = dto.Email |> Email
+        Name = dtm.FullName |> Name
+        CompanyName = dtm.Company |> CompanyName
+        Address = dtm.FullAddress |> Address
+        Phone = dtm.Phone |> Phone
+        Email = dtm.Email |> Email
         Photo = 
-            dto.Photo 
+            dtm.Photo 
             |> Option.defaultWith (randomPlaceholderPhotoPath >> runIO)
             |> PhotoPath
     }
