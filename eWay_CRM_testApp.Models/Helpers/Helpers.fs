@@ -16,7 +16,7 @@ let private emailRegex =
                     @"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3}$",
                         RegexOptions.IgnoreCase ||| RegexOptions.Compiled
                 )
-            |> Option.ofNull
+            |> Option.ofNull'
         with
         | _ -> None
     )

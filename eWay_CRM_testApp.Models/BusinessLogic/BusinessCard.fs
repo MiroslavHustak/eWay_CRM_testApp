@@ -31,7 +31,7 @@ let private searchContactsByEmail (email: string) =
                     request.Add("transmitObject", transmitObject)
                     request.Add("includeProfilePictures", JValue true)
                     
-                    let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull
+                    let! response = conn.CallMethod("SearchContacts", request) |> Option.ofNull'
                     
                     (*
                     System.Diagnostics.Debug.WriteLine("=== FULL RESPONSE ===")
@@ -39,7 +39,7 @@ let private searchContactsByEmail (email: string) =
                     System.Diagnostics.Debug.WriteLine("=== END RESPONSE ===")
                     *)
                     
-                    let! data = response.["Data"] |> Option.ofNull
+                    let! data = response.["Data"] |> Option.ofNull'
                     
                     (*
                     System.Diagnostics.Debug.WriteLine("=== DATA ARRAY ===")
@@ -66,7 +66,7 @@ let private searchContactsByEmail (email: string) =
                             )
                     *)
 
-                    let! dataStr = data.ToString() |> Option.ofNull
+                    let! dataStr = data.ToString() |> Option.ofNull'
                     let! dtms = Decode.fromString (Decode.list contactDtmDecoder) dataStr |> Result.toOption
             
                     return 
