@@ -20,7 +20,7 @@ let inline internal fromBool value =
     | false -> None
      
 let inline internal ofNull' (value: 'nullableValue) =
-    match System.Object.ReferenceEquals(value, null) with 
+    match System.Object.ReferenceEquals(box value, null) with 
     | true  -> None
     | false -> Some value     
 
