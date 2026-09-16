@@ -1,4 +1,4 @@
-﻿module IO_MonadSimulation
+﻿module ImpureWrapper
     
 type [<Struct>] internal Impure<'a> = Impure of (unit -> 'a) // wrapping custom type simulating Haskell's monads (without the monad, of course)
 

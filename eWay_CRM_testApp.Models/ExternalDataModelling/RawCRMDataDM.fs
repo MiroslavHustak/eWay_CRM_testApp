@@ -3,7 +3,7 @@
 open System
 open Thoth.Json.Net
 
-open IO_MonadSimulation
+open ImpureWrapper
 
 //=============================================================================
 // Raw eWay CRM <-> My app contact data 

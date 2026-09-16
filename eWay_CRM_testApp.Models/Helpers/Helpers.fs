@@ -5,7 +5,7 @@ open System
 open FsToolkit.ErrorHandling
 open System.Text.RegularExpressions
 
-open IO_MonadSimulation
+open ImpureWrapper
 
 //Only domains with 2-3 letter TLDs are allowed 
 let private emailRegex =

@@ -4,7 +4,7 @@ open eWayCRM.API
 open Newtonsoft.Json.Linq
 
 open Settings
-open IO_MonadSimulation
+open ImpureWrapper
 
 //*****************************************************************************
  
