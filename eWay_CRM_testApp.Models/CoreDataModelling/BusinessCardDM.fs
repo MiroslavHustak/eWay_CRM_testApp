@@ -48,7 +48,7 @@ let internal businessCardDefault =
         Address = Address "N/A"
         Phone = Phone "N/A"
         Email = Email "N/A"
-        Photo = PhotoPath (randomPlaceholderPhotoPath >> runIO <| ()) 
+        Photo = PhotoPath (randomPlaceholderPhotoPath >> runImpure <| ()) 
     }
 
 // Transformation Layer 
@@ -81,7 +81,7 @@ let internal toBusinessCard (contact: ExternalDataModelling.Contact) : BusinessC
         Email = dtm.Email |> Email
         Photo = 
             dtm.Photo 
-            |> Option.defaultWith (randomPlaceholderPhotoPath >> runIO)
+            |> Option.defaultWith (randomPlaceholderPhotoPath >> runImpure)
             |> PhotoPath
     }
 

@@ -48,13 +48,13 @@ module E_Way =
 
     let internal loadEmailsCmd () =     
         Cmd.OfAsync.perform
-            <| (fromDtm >> runIO)
+            <| (fromDtm >> runImpure)
             <| ()
             <| EmailsLoaded  
 
     let internal saveEmailsCmd newEmails =
         Cmd.OfAsync.perform
-            <| (fun () -> toDtm >> runIO <| newEmails)
+            <| (fun () -> toDtm >> runImpure <| newEmails)
             <| ()
             <| EmailsSaved
     
@@ -101,14 +101,14 @@ module E_Way =
             let newEmails =
                 pyramidOfDoom
                     {
-                        let! validEmail = isValidEmail >> runIO <| typedEmail, m.EmailAddresses
+                        let! validEmail = isValidEmail >> runImpure <| typedEmail, m.EmailAddresses
                         let cond = (validEmail <> String.Empty && not (m.EmailAddresses |> List.contains validEmail))
                         let! _ = cond |> Option.ofBool, m.EmailAddresses
                         return typedEmail :: m.EmailAddresses 
                     }
            
             let errorMsg =
-                isValidEmail >> runIO <| typedEmail
+                isValidEmail >> runImpure <| typedEmail
                 |> Option.map (fun _ -> None)  // Valid -> None (no error)
                 |> Option.defaultValue (Some <| errFn UserInputError1)  // Invalid -> Some error
         
@@ -117,7 +117,7 @@ module E_Way =
                     EmailInputString = typedEmail
                     EmailAddresses = newEmails
                     MessageDisplayText =
-                        getUniqueData >> runIO <| typedEmail
+                        getUniqueData >> runImpure <| typedEmail
                         |> Result.defaultWith
                             (fun err 
                                 -> 
@@ -132,7 +132,7 @@ module E_Way =
             match emailOpt with
             | Some email
                 ->
-                let valid = isValidEmail >> runIO <| email
+                let valid = isValidEmail >> runImpure <| email
                 let updatedModel =
                     { 
                         m with
@@ -150,7 +150,7 @@ module E_Way =
                     { 
                         updatedModel with
                             MessageDisplayText =
-                                getUniqueData >> runIO <| email 
+                                getUniqueData >> runImpure <| email 
                                 |> Result.defaultWith
                                     (fun err 
                                         -> 
@@ -175,7 +175,7 @@ module E_Way =
                             ({ m with ErrorMessage = Some <| errFn UserInputError2 }, Cmd.none)) 
                 
                     let! _ = 
-                        ((isValidEmail >> runIO <| typedEmail) |> Option.toBool,
+                        ((isValidEmail >> runImpure <| typedEmail) |> Option.toBool,
                             ({ m with ErrorMessage = Some <| errFn UserInputError1 }, Cmd.none))
                 
                     let updatedEmails =
@@ -187,7 +187,7 @@ module E_Way =
                         {
                             m with
                                 MessageDisplayText = 
-                                    getUniqueData >> runIO <| typedEmail
+                                    getUniqueData >> runImpure <| typedEmail
                                     |> Result.defaultWith 
                                         (fun err
                                             -> 

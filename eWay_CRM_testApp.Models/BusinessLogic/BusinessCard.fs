@@ -23,7 +23,7 @@ let private searchContactsByEmail (email: string) =
             -> 
             option
                 {
-                    let! email = isValidEmail >> runIO <| email
+                    let! email = isValidEmail >> runImpure <| email
                     let transmitObject = JObject()
                     transmitObject.Add("Email1Address", JValue email)
 
@@ -77,12 +77,12 @@ let private searchContactsByEmail (email: string) =
 
 let internal getUniqueData email =
 
-    IO (fun () ->    
+    Impure (fun () ->    
         result 
             {
                 let! contacts = 
                     searchContactsByEmail email
-                    |> runIO
+                    |> runImpure
                     |> Option.toResult ConnectionError
                 
                 return!  

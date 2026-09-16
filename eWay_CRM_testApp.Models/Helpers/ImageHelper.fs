@@ -14,12 +14,12 @@ open IO_MonadSimulation
 //********************************************************
 
 let internal saveBase64ImageToFile (base64String: string) (email: string) =
-    IO (fun () ->
+    Impure (fun () ->
         try
             option
                 {
                     let! validBase64 = base64String |> Option.ofNullEmptySpace                
-                    let! validEmail = isValidEmail email |> runIO
+                    let! validEmail = isValidEmail email |> runImpure
                 
                     // Decode base64
                     let! imageBytes =

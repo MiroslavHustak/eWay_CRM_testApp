@@ -21,10 +21,10 @@ type internal EmailHistoryDm =
 // Transformation Layer 
 //*********************************************
 let internal fromDtm () =
-    IO (fun () ->
+    Impure (fun () ->
         async
             {
-                let! emailList = deserializeWithThothAsync >> runIO <| pathToJson   
+                let! emailList = deserializeWithThothAsync >> runImpure <| pathToJson   
 
                 match emailList with
                 | Ok emails
@@ -39,7 +39,7 @@ let internal fromDtm () =
     )
 
 let internal toDtm newEmails =
-    IO (fun () ->
+    Impure (fun () ->
         let newEmails = { Emails = newEmails }     
-        runIO <| serializeWithThothAsync newEmails.Emails pathToJson    
+        runImpure <| serializeWithThothAsync newEmails.Emails pathToJson    
     )

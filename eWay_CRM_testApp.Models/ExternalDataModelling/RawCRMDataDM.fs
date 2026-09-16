@@ -105,7 +105,7 @@ module ContactTransform =
         
         let photoPath =
             dtm.ProfilePicture
-            |> Option.bind (fun base64 -> runIO <| saveBase64ImageToFile base64 email)
+            |> Option.bind (fun base64 -> runImpure <| saveBase64ImageToFile base64 email)
         
         { 
             FirstName = firstName

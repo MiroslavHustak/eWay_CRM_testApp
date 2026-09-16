@@ -16,7 +16,7 @@ let private establishConnection() =
 
 let internal withConnection (f: Connection -> 'a option) =  
 
-    IO (fun () ->
+    Impure (fun () ->
         
         //[<TailCall>] tested at the module level, no warnings
         let rec tryWithRetry attemptsLeft =
@@ -44,27 +44,27 @@ let internal withConnection (f: Connection -> 'a option) =
 //You may look how I dealt with connectivity listening in the past here:
 //https://github.com/MiroslavHustak/OdisTimetableDownloaderMAUI/blob/master/Connectivity/Connectivity.fs
 
-let private connectionInstance = IO (fun () -> lazy (establishConnection()))  //Not used yet
+let private connectionInstance = Impure (fun () -> lazy (establishConnection()))  //Not used yet
 
 let internal withConnection2 (f: Connection -> 'a option) = //Not used yet
 
-    IO (fun () ->
+    Impure (fun () ->
         try
-            f (runIO connectionInstance).Value
+            f (runImpure connectionInstance).Value
         with
         | _ -> None
     )
 
 let internal cleanup() =  //Not used yet
 
-    IO (fun () ->
-        match (runIO connectionInstance).IsValueCreated with
+    Impure (fun () ->
+        match (runImpure connectionInstance).IsValueCreated with
         | false 
             -> ()
         | true 
             ->
             try 
-                (runIO connectionInstance).Value.LogOut() |> ignore<JObject>
+                (runImpure connectionInstance).Value.LogOut() |> ignore<JObject>
             with 
             | _ -> ()
     )

@@ -9,7 +9,7 @@ open IO_MonadSimulation
 
 //Only domains with 2-3 letter TLDs are allowed 
 let private emailRegex =
-    IO (fun () ->   
+    Impure (fun () ->   
         try
             Regex
                 (
@@ -22,11 +22,11 @@ let private emailRegex =
     )
 
 let internal isValidEmail (email: string) =
-    IO (fun () ->
+    Impure (fun () ->
         try
             option
                 {
-                    let! emailRegex = runIO emailRegex
+                    let! emailRegex = runImpure emailRegex
                     let! _ = email |> Option.ofNullEmptySpace
                     let! _ = emailRegex.IsMatch email |> Option.ofBool
 
@@ -43,7 +43,7 @@ let internal randomPlaceholderPhotoPath () =
             @"Resources/placeholder2.jpg" 
         |]
     
-    IO (fun () ->    
+    Impure (fun () ->    
         try
             placeholders 
             |> Array.item (Random().Next (placeholders |> Array.length)) 

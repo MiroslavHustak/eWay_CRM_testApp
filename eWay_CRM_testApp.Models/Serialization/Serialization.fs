@@ -12,7 +12,7 @@ open IO_MonadSimulation
 
 let private safeFullPathResult path =
 
-    IO (fun () ->   
+    Impure (fun () ->   
         try
             Path.GetFullPath path
             |> Option.ofNullEmpty 
@@ -23,7 +23,7 @@ let private safeFullPathResult path =
       
 let internal serializeWithThothAsync (emails: string list) (path : string) =
 
-    IO (fun () ->   
+    Impure (fun () ->   
         try   
             let json: string =
                 emails
@@ -33,7 +33,7 @@ let internal serializeWithThothAsync (emails: string list) (path : string) =
 
             asyncResult 
                 {
-                    let! path = safeFullPathResult >> runIO <| path                                
+                    let! path = safeFullPathResult >> runImpure <| path                                
                     use writer = new StreamWriter(path, append = false)
                     return! writer.WriteAsync json |> Async.AwaitTask
                 }
@@ -43,11 +43,11 @@ let internal serializeWithThothAsync (emails: string list) (path : string) =
 
 let internal deserializeWithThothAsync (path: string) =
 
-    IO (fun () ->   
+    Impure (fun () ->   
         try 
             asyncResult
                 {
-                    let! fullPath = safeFullPathResult >> runIO <| path
+                    let! fullPath = safeFullPathResult >> runImpure <| path
         
                     // TODO: Verify TOCTOU effect
                     do! 

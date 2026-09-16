@@ -15,7 +15,7 @@
 		<Compile Include="Settings\Settings.fs" />
 		<Compile Include="Types\Grid3Algebra.fs" />
 		<Compile Include="Types\ErrorTypes.fs" />
-		<Compile Include="Types\IO_MonadSimulation.fs" />
+		<Compile Include="Types\ImpurityWrapper.fs" />
 		<Compile Include="Types\TDD.fs" />
 		<Compile Include="ErrorHandling\ErrorHandling.fs" />
 		<Compile Include="CEBuilders\CEBuilders.fs" />
